@@ -3,13 +3,8 @@
 #include "bresnham.h"
 #include "hp2xx.h"
 
-int read_c(void *ctx);
-void unread_c(int c, void *ctx);
 int read_float (float *pnum, void * hd);
 void read_string (char *target, void *);
-
-int write_c(int c, void *ctx);
-size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx);
 
 void Pen_to_tmpfile(int pen);
 void Speed_to_tmpfile(int speed);
