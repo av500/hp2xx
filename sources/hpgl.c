@@ -502,11 +502,14 @@ static void Plotter_to_User_coord(const HPGL_Pt * p_plot, HPGL_Pt * p_usr)
 	p_usr->y = S1.y + (p_plot->y - P1.y) / Q.y;
 }
 
+#define DBG if(0)
+
 void PlotCmd_to_tmpfile(PlotCmd cmd)
 {
 	if (record_off)		/* Wrong page!  */
 		return;
 
+DBG printf("Cmd %d\n", cmd);
 	if (!silent_mode)
 		switch (vec_cntr_w++) {
 		case 0:
@@ -597,6 +600,7 @@ void Pen_to_tmpfile(int pen)
 	if (record_off)
 		return;
 
+DBG printf("PEN %d\n", pen);
 	if (write_c((int) SET_PEN, td) == EOF || write_c(pen, td) == EOF) {
 		PError("Pen_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
@@ -609,6 +613,7 @@ void HPGL_Pt_to_tmpfile(const HPGL_Pt * pf)
 	if (record_off)		/* Wrong page!  */
 		return;
 
+DBG printf("Pt  %8.3f %8.3f\n", pf->x, pf->y);
 	if (write_bytes((VOID *) pf, sizeof(*pf), 1, td) != 1) {
 		PError("HPGL_Pt_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
