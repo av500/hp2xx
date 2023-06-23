@@ -242,8 +242,18 @@ OBJS	= clip.o fillpoly.o\
 
 PROGRAM	= hp2xx
 
+TESTOBJS= clip.o fillpoly.o\
+	  hpgl.o picbuf.o bresnham.o murphy.o chardraw.o \
+	  test.o pendef.o lindef.o
+
+TEST	= test
+
 $(PROGRAM): $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) $(ALL_LIBS) $(EX_LIBS) -o $(PROGRAM)
+	$(BINDCMD)
+
+$(TEST): $(TESTOBJS) Makefile
+	$(CC) $(LFLAGS) $(TESTOBJS) -lm -o $(TEST)
 	$(BINDCMD)
 
 default:
@@ -309,7 +319,7 @@ lint:
 
 clean:
 	-make mostlyclean
-	-$(RMCMD) core a.out *~ ./hp2xx.texinfo ./hp2xx.inf* $(PROGRAM)
+	-$(RMCMD) core a.out *~ ./hp2xx.texinfo ./hp2xx.inf* $(PROGRAM) $(TEST)
 
 distclean:
 	@echo make distclean -- not supported yet.
