@@ -1028,7 +1028,6 @@ void plot_string(char *txt, LB_Mode mode, short current_pen)
 	get_label_offset(txt, mode);
 	if (tp->strokewidth != 9999.) {
 		savedwidth = pt.width[current_pen];
-		PlotCmd_to_tmpfile(DEF_PW);
 		Pen_Width_to_tmpfile(current_pen, tp->strokewidth);
 	}
 	while (*txt) {
@@ -1103,7 +1102,6 @@ void plot_string(char *txt, LB_Mode mode, short current_pen)
 		txt++;
 	}
 	if (tp->strokewidth != 9999.) {
-		PlotCmd_to_tmpfile(DEF_PW);
 		Pen_Width_to_tmpfile(current_pen, savedwidth);
 	}
 }
@@ -1244,7 +1242,6 @@ void plot_user_char(FILE * hd, short current_pen)
 
 	if (tp->strokewidth != 9999.) {
 		savedwidth = pt.width[current_pen];
-		PlotCmd_to_tmpfile(DEF_PW);
 		Pen_Width_to_tmpfile(current_pen, tp->strokewidth);
 	}
 
@@ -1275,7 +1272,6 @@ void plot_user_char(FILE * hd, short current_pen)
 
 	CurrentLineType = SafeLineType;	/* restore LineType */
 	if (tp->strokewidth != 9999.) {
-		PlotCmd_to_tmpfile(DEF_PW);
 		Pen_Width_to_tmpfile(current_pen, savedwidth);
 	}
 }

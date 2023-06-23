@@ -620,6 +620,46 @@ DBG printf("DEF_LA\n");
 	return;
 }
 
+void Pen_Width_to_tmpfile(int pen, PEN_W width)
+{
+	int i;
+	PEN_N tp;
+	PEN_W tw;
+
+	tp = (PEN_N) pen;
+	tw = width;
+
+	if (record_off)		/* Wrong page!  */
+		return;
+	if (pen < 0)
+		return;		/* Might happen when "current pen" is still
+				   undefined */
+	if (tp == 0) {		/* set all pens */
+		for (i = 1; i < NUMPENS; ++i)
+			pt.width[i] = tw;
+	} else {
+		pt.width[tp] = tw;	/* set just the specified one */
+	}
+
+DBG printf("DEF_PW\n");
+	if (write_c((int) DEF_PW, td) == EOF) {
+		PError("PlotCmd_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tp, sizeof(tp), 1, td) != 1) {
+		PError("Pen_Width_to_tmpfile - pen");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&tw, sizeof(tw), 1, td) != 1) {
+		PError("Pen_Width_to_tmpfile - width");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
 void HPGL_Pt_to_polygon(HPGL_Pt pf)
 {
 	if (record_off)		/* Wrong page!  */
@@ -3000,7 +3040,6 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 				mywidth = Diag_P1_P2 / 1000.;
 			if (mywidth < 0.1)
 				mywidth = 0.1;
-			PlotCmd_to_tmpfile(DEF_PW);
 			Pen_Width_to_tmpfile(0, mywidth);
 /*	 
           fprintf(stderr,"PW: defaulting to 0.35 for all pens\n");
@@ -3015,7 +3054,6 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 		}
 
 		if (read_float(&ftmp, hd)) {	/* width only, applies to all pens */
-			PlotCmd_to_tmpfile(DEF_PW);
 			Pen_Width_to_tmpfile(0, mywidth);
 			if (pg->maxpensize < mywidth)
 				pg->maxpensize = mywidth;
@@ -3023,7 +3061,6 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
           fprintf(stderr,"PW: defaulting to %f for all pens\n",mywidth);
 */
 		} else {	/* second parameter is pen */
-			PlotCmd_to_tmpfile(DEF_PW);
 			Pen_Width_to_tmpfile((int) ftmp, mywidth);
 			if ((int) ftmp <= pg->maxpens) {
 				if (pg->maxpensize < mywidth)

@@ -35,7 +35,6 @@ void fill(HPGL_Pt polygon[], int numpoints, HPGL_Pt point1,
 
 	penwidth = 0.1;
 
-	PlotCmd_to_tmpfile(DEF_PW);
 	Pen_Width_to_tmpfile(1, penwidth);
 
 	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
@@ -229,7 +228,6 @@ return;
 
 	if (filltype != 4) {
 		CurrentLineEnd = SafeLineEnd;
-		PlotCmd_to_tmpfile(DEF_PW);
 		Pen_Width_to_tmpfile(1, SafePenW);
 		Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
 		return;
@@ -390,7 +388,6 @@ return;
 
 	}			/* next scanline */
 	CurrentLineEnd = SafeLineEnd;
-	PlotCmd_to_tmpfile(DEF_PW);
 	Pen_Width_to_tmpfile(1, SafePenW);
 	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
 }

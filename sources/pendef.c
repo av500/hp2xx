@@ -21,46 +21,12 @@ copies.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "hpgl.h"
 #include "pendef.h"
 
 PEN pt;
-
-void Pen_Width_to_tmpfile(int pen, PEN_W width)
-{
-	int i;
-	PEN_N tp;
-	PEN_W tw;
-
-	tp = (PEN_N) pen;
-	tw = width;
-
-	if (record_off)		/* Wrong page!  */
-		return;
-	if (pen < 0)
-		return;		/* Might happen when "current pen" is still
-				   undefined */
-	if (tp == 0) {		/* set all pens */
-		for (i = 1; i < NUMPENS; ++i)
-			pt.width[i] = tw;
-	} else {
-		pt.width[tp] = tw;	/* set just the specified one */
-	}
-
-	if (fwrite(&tp, sizeof(tp), 1, td) != 1) {
-		PError("Pen_Width_to_tmpfile - pen");
-		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
-	}
-	if (fwrite(&tw, sizeof(tw), 1, td) != 1) {
-		PError("Pen_Width_to_tmpfile - width");
-		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
-	}
-}
 
 void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
 {
