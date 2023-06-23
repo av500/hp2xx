@@ -121,21 +121,11 @@
 
 #define	ETX		'\003'
 
-/*
-#define P1X_default	603.0	
-#define P1Y_default	521.0
-#define P2X_default	10603.0
-#define P2Y_default	7721.0
-*/
 #define P1X_default	0.0	/* drop margins       */
 #define P1Y_default	0.0
-/*
-#define P2X_default   11880. 
-#define P2Y_default   16800.
-*/
-#define P2X_default   33600.	/* A0 media */
-#define P2Y_default   47520.
 
+#define P2X_default   11420.	/* HP7225 limits */
+#define P2Y_default   8140.
 
 #ifdef NORINT
 #define rint(a) (long)(a+0.5)
