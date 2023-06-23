@@ -306,11 +306,9 @@ static unsigned char b_max = 255;
 #define WU      0x5755
 #define XT	0x5854
 #define YT	0x5954
-static void par_err_exit(int code, int cmd, FILE * hd)
+static void par_err_exit(int code, int cmd, void * hd)
 {
-
 	const char *msg;
-	char tmpstr[21];
 
 	switch (code) {
 	case 0:
@@ -339,15 +337,8 @@ static void par_err_exit(int code, int cmd, FILE * hd)
 	Eprintf("\nError in command %c%c: %s\n", cmd >> 8, cmd & 0xFF,
 		msg);
 	Eprintf(" @ Cmd %ld\n", vec_cntr_w);
-	fseek(hd, -10L, SEEK_CUR);
-	read_string(tmpstr, hd);
-	tmpstr[20] = '\0';
-	Eprintf(" lately read: %s\n", tmpstr);
 	exit(ERROR);
 }
-
-
-
 
 static void reset_HPGL(void)
 {
@@ -916,7 +907,7 @@ static void rect(int relative, int filled, float cur_pensize, HPGL_Pt p)
 	Pen_action_to_tmpfile(MOVE_TO, &p_last, scale_flag);
 }
 
-static void rects(int relative, int filled, float cur_pensize, FILE * hd)
+static void rects(int relative, int filled, float cur_pensize, void * hd)
 {
 	HPGL_Pt p;
 	for (;;) {
@@ -1736,7 +1727,7 @@ static void read_ESC_cmd(void * hd, int hp)
 /**
  **	lines:	Process PA-, PR-, PU-, and  PD- commands
  **/
-static void lines(int relative, FILE * hd)
+static void lines(int relative, void * hd)
 /**
  ** Examples of anticipated commands:
  **
@@ -1918,7 +1909,7 @@ static void arc_increment(HPGL_Pt * pcenter, double r, double phi)
 	p_last = p;
 }
 
-static void bezier(int relative, FILE * hd)
+static void bezier(int relative, void * hd)
 {
 	HPGL_Pt p, p1, p2, p3, polyp;
 	int i, outside;
@@ -2011,7 +2002,7 @@ p(t) = t^3*P3 + 3*t^2*(1-t)*P2 + 3*t*(1-t)^2* P1 + (1-t)^3 * P0
 	}
 }
 
-static void tarcs(int relative, FILE * hd)
+static void tarcs(int relative, void * hd)
 {
 	HPGL_Pt p, p2, p3, center, d;
 	float alpha, eps;
@@ -2131,7 +2122,7 @@ center.x,center.y,r);
 
 }
 
-static void arcs(int relative, FILE * hd)
+static void arcs(int relative, void * hd)
 {
 	HPGL_Pt p, d, center;
 	float alpha, eps;
