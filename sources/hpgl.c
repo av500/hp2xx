@@ -523,6 +523,19 @@ DBG printf("PEN %d\n", pen);
 	}
 }
 
+void Speed_to_tmpfile(int speed)
+{
+	if (record_off)
+		return;
+
+DBG printf("VS  %d\n", speed);
+	if (write_c((int) SET_PEN, td) == EOF || write_c(pen, td) == EOF) {
+		PError("Pen_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
 void HPGL_Pt_to_tmpfile(const HPGL_Pt * pf)
 {
 	if (record_off)		/* Wrong page!  */
@@ -3699,12 +3712,23 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			Eprintf("\nLABEL: %s\n", strbuf);
 		break;
 	case VS:
-		if (read_float(&ftmp, hd))	/* Just VS */
+		if (read_float(&p1.x, hd)) {	
+			Speed_to_tmpfile(-1);
+			// default speed
 			break;
-		if (read_float(&ftmp, hd))	/* uniform speed */
-			break;
-		if (read_float(&ftmp, hd))	/* speed for given pen */
-			break;
+		} else {
+			if (read_float(&p1.y, hd)) {	
+				// uniform speed
+				Speed_to_tmpfile((short)p1.x);
+				break;
+			} else {
+				// speed for given pen
+				Speed_to_tmpfile((short)p1.x);
+				if (read_float(&ftmp, hd)) {	
+					break;
+				}			
+			}
+		}
 	default:		/* Skip unknown HPGL command: */
 		n_unknown++;
 		if (!silent_mode)

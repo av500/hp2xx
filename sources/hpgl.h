@@ -13,6 +13,7 @@ size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx);
 
 void PlotCmd_to_tmpfile (PlotCmd cmd);
 void Pen_to_tmpfile(int pen);
+void Speed_to_tmpfile(int speed);
 void HPGL_Pt_to_tmpfile (const HPGL_Pt * pf);
 
 void HPGL_Pt_to_polygon (const HPGL_Pt pf );
