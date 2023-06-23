@@ -127,6 +127,9 @@
 #define P2X_default   11420.	/* HP7225 limits */
 #define P2Y_default   8140.
 
+#define PSX_default   11420.
+#define PSY_default   8140.
+
 #ifdef NORINT
 #define rint(a) (long)(a+0.5)
 #endif
@@ -153,8 +156,8 @@ HPGL_Pt C1 = { P1X_default, P1Y_default };	/* Clipping points        */
 HPGL_Pt C2 = { P2X_default, P2Y_default };
 HPGL_Pt S1 = { P1X_default, P1Y_default };	/* Scaled       */
 HPGL_Pt S2 = { P2X_default, P2Y_default };	/* points       */
-HPGL_Pt Q = { 1., 1. };		/* Delta-P/Delta-S: Initialized with first SC   */
-HPGL_Pt M;			/* maximum coordinates set by PS instruction */
+HPGL_Pt Q =  { 1., 1. };			/* Delta-P/Delta-S: Initialized with first SC   */
+HPGL_Pt M =  { PSX_default, PSY_default };	/* maximum coordinates set by PS instruction */
 /**
  ** Global from chardraw.c:
  **/
