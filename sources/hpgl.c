@@ -1376,9 +1376,6 @@ int read_float(float *pnum, void *hd)
 	return 0;
 }
 
-
-
-
 void read_string(char *buf, void *hd)
 {
 	int c;
@@ -1405,9 +1402,6 @@ void read_string(char *buf, void *hd)
 	*buf = '\0';
 }
 
-
-
-
 static void read_symbol_char(void * hd)
 {
 	int c;
@@ -1432,9 +1426,6 @@ static void read_symbol_char(void * hd)
 			}
 		}
 }
-
-
-
 
 static void read_ESC_HP7550A(void * hd)
 /*
@@ -1484,7 +1475,6 @@ static void read_ESC_HP7550A(void * hd)
 		return;
 	}
 }
-
 
 static int read_PJL(void * hd)
 /*
