@@ -511,8 +511,6 @@ static void Plotter_to_User_coord(const HPGL_Pt * p_plot, HPGL_Pt * p_usr)
 	p_usr->y = S1.y + (p_plot->y - P1.y) / Q.y;
 }
 
-
-
 void PlotCmd_to_tmpfile(PlotCmd cmd)
 {
 	if (record_off)		/* Wrong page!  */
@@ -603,8 +601,17 @@ void PlotCmd_to_tmpfile(PlotCmd cmd)
 	}
 }
 
+void Pen_to_tmpfile(int pen)
+{
+	if (record_off)
+		return;
 
-
+	if (write_c((int) SET_PEN, td) == EOF || write_c(pen, td) == EOF) {
+		PError("Pen_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
 
 void HPGL_Pt_to_tmpfile(const HPGL_Pt * pf)
 {
@@ -970,12 +977,7 @@ int read_PE_flags(GEN_PAR * pg, int c, void * hd, PE_flags * fl)
 		if (pen == 0 && pg->mapzero > -1)
 			pen = pg->mapzero;
 		if (old_pen != pen) {
-			if ((write_c(SET_PEN, td) == EOF)
-			    || (write_c(pen, td) == EOF)) {
-				PError("Writing to temporary file:");
-				Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-				exit(ERROR);
-			}
+			Pen_to_tmpfile(pen);
 		}
 		if (pen)
 			pens_in_use[pen] = 1;
@@ -3452,12 +3454,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			pen = pen % pg->maxpens;
 		}
 		if (old_pen != pen) {
-			if ((write_c(SET_PEN, td) == EOF)
-			    || (write_c(pen, td) == EOF)) {
-				PError("Writing to temporary file:");
-				Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-				exit(ERROR);
-			}
+			Pen_to_tmpfile(pen);
 		}
 		if (pen)
 			pens_in_use[pen] = 1;
