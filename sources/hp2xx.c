@@ -227,10 +227,10 @@ void print_supported_modes(void)
 {
 	int i;
 
-	Eprintf("%s", ModeList[0].modestr);
+	printf("%s", ModeList[0].modestr);
 	for (i = 1; ModeList[i].mode != XX_TERM; i++)
-		Eprintf(",%s", ModeList[i].modestr);
-	Eprintf("\n");
+		printf(",%s", ModeList[i].modestr);
+	printf("\n");
 }
 
 
@@ -238,14 +238,14 @@ void print_supported_modes(void)
 
 void Send_version(void)
 {
-	Eprintf("\n%s\n%s\n%s\n%s\n%s\n",
+	printf("\n%s\n%s\n%s\n%s\n%s\n",
 		"hp2xx is free software and you are welcome to distribute copies of it",
 		"  under certain conditions. There is absolutely no warranty for hp2xx!",
 		"For full details, read file COPYING (shipped along with this package),",
 		"  or write to:\t\tFree Software Foundation, Inc.",
 		"\t\t\t675 Mass Ave, Cambridge, MA 02139, USA");
 
-	Eprintf("\n%s\tV %s  (%s)   %s\n%s",
+	printf("\n%s\tV %s  (%s)   %s\n%s",
 		"HP2xx:\tA HPGL converter (xx = mf, eps, pcl, pcx, img ...)\n",
 		VERS_NO, VERS_DATE, VERS_COPYRIGHT, VERS_ADDITIONS);
 }
@@ -260,155 +260,150 @@ void usage_msg(const GEN_PAR * pg, const IN_PAR * pi, const OUT_PAR * po)
 	Send_version();
 
 #ifdef ATARI
-	Eprintf
+	printf
 	    ("Usage:\tdouble-click on HP2XX.TTP, type parameters into\n");
-	Eprintf("\tcommand-line with following syntax:\n");
-	Eprintf("\t[options] [hpglfile]\n");
-	Eprintf
+	printf("\tcommand-line with following syntax:\n");
+	printf("\t[options] [hpglfile]\n");
+	printf
 	    ("\n\t(if command-line offers not enough space for all parameters\n");
-	Eprintf("\tuse a command-line interpreter for starting HP2xx)\n");
+	printf("\tuse a command-line interpreter for starting HP2xx)\n");
 #else
-	Eprintf("Usage:\thp2xx [options] [file1 [file2 ...]]\n");
+	printf("Usage:\thp2xx [options] [file1 [file2 ...]]\n");
 #endif				/* ATARI */
 
-	Eprintf
+	printf
 	    ("\tUnix: Filter usage (.. | hp2xx -q -f- [options] | ..) ok\n");
-	NormalWait();
 
-	Eprintf("\nOpt fmt   defaults\tComment:\n");
-	Eprintf
+	printf("\nOpt fmt   defaults\tComment:\n");
+	printf
 	    ("---------------------------------------------------------------------------\n");
-	Eprintf
+	printf
 	    ("-m strg   %s\t\tMode. Valid mode strings for this particular binary are:\n\t\t\t",
 	     pg->mode);
 	print_supported_modes();
 
-	Eprintf
+	printf
 	    ("-n        %s\t\tno filling of polygons (ignore FP commands)\n",
 	     FLAGSTATE(pg->nofill));
-	Eprintf
+	printf
 	    ("-N        %s\t\tno honoring of papersize (PS) requests\n\t\t\t (plotsize calculated from data instead)\n",
 	     FLAGSTATE(pg->no_ps));
-	Eprintf
+	printf
 	    ("-M int	\t\tremap all drawing commands using pen 0 to this pen\n");
-	Eprintf
+	printf
 	    ("-f strg   (auto gen.)\tName of output file ('-' = to stdout)\n");
-	Eprintf("-l strg   (stderr)\tName of log file\n");
-	Eprintf
+	printf("-l strg   (stderr)\tName of log file\n");
+	printf
 	    ("-p strg   %1d%1d%1d%1d%1d%1d%1d%1d\tPensize(s) of pen 1 to 8 (in 1/10 mm).\n",
 	     (unsigned) (10 * pt.width[1]), (unsigned) (10 * pt.width[2]),
 	     (unsigned) (10 * pt.width[3]), (unsigned) (10 * pt.width[4]),
 	     (unsigned) (10 * pt.width[5]), (unsigned) (10 * pt.width[6]),
 	     (unsigned) (10 * pt.width[7]), (unsigned) (10 * pt.width[8]));
-	Eprintf("\t\t\t\"strg\" must consist of 1 to 8 digits '0'-'9'\n");
-	Eprintf("\t\t\tfirst digit = pen1 ... last digit = pen 8\n");
-	Eprintf("\t\t\t(default settings shown)\n");
-	Eprintf
+	printf("\t\t\t\"strg\" must consist of 1 to 8 digits '0'-'9'\n");
+	printf("\t\t\tfirst digit = pen1 ... last digit = pen 8\n");
+	printf("\t\t\t(default settings shown)\n");
+	printf
 	    ("-c strg   %1d%1d%1d%1d%1d%1d%1d%1d\tPen color(s) (default settings shown).\n",
 	     pt.color[1], pt.color[2], pt.color[3], pt.color[4],
 	     pt.color[5], pt.color[6], pt.color[7], pt.color[8]);
-	Eprintf
+	printf
 	    ("\t\t\t0 = off, 1 = black, 2 = red, 3 = green, 4 = blue,\n");
-	Eprintf("\t\t\t5 = cyan, 6 = magenta, 7 = yellow\n");
-	Eprintf("-P n:n    %d:%d\t\tPage range (0:0 = all pages).\n",
+	printf("\t\t\t5 = cyan, 6 = magenta, 7 = yellow\n");
+	printf("-P n:n    %d:%d\t\tPage range (0:0 = all pages).\n",
 		pi->first_page, pi->last_page);
-	Eprintf("-q        %s\t\tQuiet mode (no diagnostics)\n",
+	printf("-q        %s\t\tQuiet mode (no diagnostics)\n",
 		FLAGSTATE(pg->quiet));
-	Eprintf
+	printf
 	    ("-r float%5.1f\t\tRotation angle [deg]. -r90 = landscape\n",
 	     pi->rotation);
-	Eprintf("-s strg   %s\tName of swap file\n", pg->swapfile);
-	NormalWait();
-	Eprintf("\nBitmap controls:\n");
-	Eprintf("-d int    %d\t\tDPI value for x or x&y, if -D unused.\n",
-		po->dpi_x);
-	Eprintf("-D int    %d\t\tDPI value for y ONLY\n", po->dpi_x);
-	/* x, not y! */
-	Eprintf("-e int    %d\t\tExtra clipping space\n", pg->extraclip);
+	printf("-s strg   %s\tName of swap file\n", pg->swapfile);
 
-	Eprintf("\nPCL-exclusive options:\n");
-	Eprintf("-i         %s\tPre-initialize printer\n",
+	printf("\nBitmap controls:\n");
+	printf("-d int    %d\t\tDPI value for x or x&y, if -D unused.\n",
+		po->dpi_x);
+	printf("-D int    %d\t\tDPI value for y ONLY\n", po->dpi_x);
+	/* x, not y! */
+	printf("-e int    %d\t\tExtra clipping space\n", pg->extraclip);
+
+	printf("\nPCL-exclusive options:\n");
+	printf("-i         %s\tPre-initialize printer\n",
 		FLAGSTATE(po->init_p));
-	Eprintf("-I         %s\tInitialize using PCL3GUI commands\n",
+	printf("-I         %s\tInitialize using PCL3GUI commands\n",
 		FLAGSTATE(po->init_p3gui));
-	Eprintf("-F         %s\tSend a FormFeed at end\n",
+	printf("-F         %s\tSend a FormFeed at end\n",
 		FLAGSTATE(po->formfeed));
-	Eprintf
+	printf
 	    ("-S int     %d\tUse Deskjet special commands (0=off, 1=B/W, 3=CMY, 4=CMYK)\n",
 	     po->specials);
-	Eprintf
+	printf
 	    ("NOTE:    \tOnly valid for -d: 300/150/100/75; -D invalid!\n");
 
-	Eprintf("\nPCL / PostScript / Preview options:\n");
-	Eprintf("-o float %5.1f\tX offset [mm] of picture\n", pi->xoff);
-	Eprintf("-O float %5.1f\tY offset [mm] of picture\n", pi->yoff);
-	Eprintf
+	printf("\nPCL / PostScript / Preview options:\n");
+	printf("-o float %5.1f\tX offset [mm] of picture\n", pi->xoff);
+	printf("-O float %5.1f\tY offset [mm] of picture\n", pi->yoff);
+	printf
 	    ("-C           \tFit picture into center of (-a/-h/-w) rectangle\n");
 
-	Eprintf("\nTiff-exclusive options:\n");
-	Eprintf
+	printf("\nTiff-exclusive options:\n");
+	printf
 	    ("-S int     %d\tUse Tiff Compression Format (0/1=None, 2=RLE, 3=G3Fax, 4=G4Fax, 5=LZW, 6=OJpeg, 7=Jpeg, 8=Deflate)\n",
 	     po->specials);
 
-	NormalWait();
-
-	Eprintf("\nDXF-exclusive options:\n");
-	Eprintf
+	printf("\nDXF-exclusive options:\n");
+	printf
 	    ("-S int     %d\tMap pens to DXF colors (0=No mapping, 1=use pen no., 2=use width*10 , 3=map widths <0.2 to 1, <0.3 to 2,0.4 to 3 , above 0.4 to 4 )\n",
 	     po->specials);
 
-	Eprintf("\nSize controls:\n");
+	printf("\nSize controls:\n");
 
-	Eprintf
+	printf
 	    ("-a float %5.1f\tAspect factor (x/y correction). Valid: > 0.0\n",
 	     pi->aspectfactor);
-	Eprintf("-h float %5.1f\tHeight [mm] of picture\n", pi->height);
-	Eprintf("-w float %5.1f\tWidth  [mm] of picture\n", pi->width);
-	Eprintf
+	printf("-h float %5.1f\tHeight [mm] of picture\n", pi->height);
+	printf("-w float %5.1f\tWidth  [mm] of picture\n", pi->width);
+	printf
 	    ("-t         %s\tShow true HPGL size. Disables -a -h -w !\n",
 	     FLAGSTATE(pi->truesize));
-	Eprintf("-H float %5.1f\tHardware X range [1/40 mm] of device\n",
+	printf("-H float %5.1f\tHardware X range [1/40 mm] of device\n",
 		pi->hwlimit.x);
-	Eprintf("-W float %5.1f\tHardware Y range [1/40 mm] of device\n",
+	printf("-W float %5.1f\tHardware Y range [1/40 mm] of device\n",
 		pi->hwlimit.y);
-	Eprintf("-x float   -\tManual HPGL-coord range presetting: x0\n");
-	Eprintf("-X float   -\tManual HPGL-coord range presetting: x1\n");
-	Eprintf("-y float   -\tManual HPGL-coord range presetting: y0\n");
-	Eprintf("-Y float   -\tManual HPGL-coord range presetting: y1\n");
-	Eprintf("-z float %5.1f\t(3d nc output only) Z engage depth\n",
+	printf("-x float   -\tManual HPGL-coord range presetting: x0\n");
+	printf("-X float   -\tManual HPGL-coord range presetting: x1\n");
+	printf("-y float   -\tManual HPGL-coord range presetting: y0\n");
+	printf("-Y float   -\tManual HPGL-coord range presetting: y1\n");
+	printf("-z float %5.1f\t(3d nc output only) Z engage depth\n",
 		po->zengage);
-	Eprintf("-Z float %5.1f\t(3d nc output only) Z retract depth\n",
+	printf("-Z float %5.1f\t(3d nc output only) Z retract depth\n",
 		po->zretract);
 
 #ifdef DOS
-	Eprintf
+	printf
 	    ("\n-V int   %d\tVGA mode byte (decimal). Change at own risk!\n",
 	     po->vga_mode);
 #endif
 
-	NormalWait();
-
-	Eprintf("Corresponding long options:\n\n");
-	Eprintf
+	printf("Corresponding long options:\n\n");
+	printf
 	    ("hp2xx   [--mode] [--colors] [--pensizes] [--pages] [--quiet]\n");
-	Eprintf
+	printf
 	    ("\t[--nofill] [--no_ps] [--mapzero]\n");
-	Eprintf
+	printf
 	    ("\t[--width] [--height] [--aspectfactor] [--truesize]\n");
-	Eprintf("\t[--x0] [--x1] [--y0] [--y1]\n");
-	Eprintf("\t[--xoffset] [--yoffset] [--center]\n");
-	Eprintf("\t[--DPI] [--DPI_x] [--DPI_y] [--extraclip]\n");
-	Eprintf("\t[--outfile] [--logfile] [--swapfile]\n");
-	Eprintf
+	printf("\t[--x0] [--x1] [--y0] [--y1]\n");
+	printf("\t[--xoffset] [--yoffset] [--center]\n");
+	printf("\t[--DPI] [--DPI_x] [--DPI_y] [--extraclip]\n");
+	printf("\t[--outfile] [--logfile] [--swapfile]\n");
+	printf
 	    ("\t[--PCL_formfeed] [--PCL_init] [--PCL_Deskjet] [--PCL_PCL3GUI]\n");
 #ifdef DOS
-	Eprintf("\t[--VGAmodebyte]");
+	printf("\t[--VGAmodebyte]");
 #endif
-	Eprintf("\t[--help] [--version]\n");
+	printf("\t[--help] [--version]\n");
 
 
 #ifdef PURE_C
-	Eprintf("\nPress RETURN key\n");
+	printf("\nPress RETURN key\n");
 	getchar();
 #endif
 }
