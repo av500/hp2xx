@@ -524,19 +524,6 @@ void unread_c(int c, void *ctx)
 	ungetc(c, hd);
 }
 
-void PlotCmd_to_tmpfile(PlotCmd cmd)
-{
-	if (record_off)		/* Wrong page!  */
-		return;
-
-DBG printf("Cmd %d\n", cmd);
-	if (write_c((int) cmd, td) == EOF) {
-		PError("PlotCmd_to_tmpfile");
-		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
-	}
-}
-
 void Pen_to_tmpfile(int pen)
 {
 	if (record_off)
@@ -557,7 +544,7 @@ void Speed_to_tmpfile(int speed)
 
 DBG printf("VS  %d\n", speed);
 	if (write_c((int) SET_SPEED, td) == EOF || write_c(speed, td) == EOF) {
-		PError("Pen_to_tmpfile");
+		PError("Speed_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
 	}
@@ -571,7 +558,7 @@ void HPGL_Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
 DBG printf("CMD %d  Pt  %8.3f %8.3f\n", cmd, pf->x, pf->y);
 
 	if (write_c((int) cmd, td) == EOF) {
-		PError("PlotCmd_to_tmpfile");
+		PError("HPGL_Pt_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
 	}
@@ -600,7 +587,7 @@ void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
 
 DBG printf("DEF_LA\n");
 	if (write_c((int) DEF_LA, td) == EOF) {
-		PError("PlotCmd_to_tmpfile");
+		PError("Line_Attr_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
 	}
@@ -643,7 +630,7 @@ void Pen_Width_to_tmpfile(int pen, PEN_W width)
 
 DBG printf("DEF_PW\n");
 	if (write_c((int) DEF_PW, td) == EOF) {
-		PError("PlotCmd_to_tmpfile");
+		PError("Pen_Width_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
 	}
@@ -675,7 +662,7 @@ void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
 
 DBG printf("DEF_PC\n");
 	if (write_c((int) DEF_PC, td) == EOF) {
-		PError("PlotCmd_to_tmpfile");
+		PError("Pen_Color_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
 	}
