@@ -563,12 +563,19 @@ DBG printf("VS  %d\n", speed);
 	}
 }
 
-void HPGL_Pt_to_tmpfile(const HPGL_Pt * pf)
+void HPGL_Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
 {
 	if (record_off)		/* Wrong page!  */
 		return;
 
-DBG printf("Pt  %8.3f %8.3f\n", pf->x, pf->y);
+DBG printf("CMD %d  Pt  %8.3f %8.3f\n", cmd, pf->x, pf->y);
+
+	if (write_c((int) cmd, td) == EOF) {
+		PError("PlotCmd_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
 	if (write_bytes((VOID *) pf, sizeof(*pf), 1, td) != 1) {
 		PError("HPGL_Pt_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
@@ -636,22 +643,22 @@ LPattern_Generator(HPGL_Pt * pa,
 			length_of_ele = (double) *p_cur_pat++ / 100;	/* Line or point        */
 			if (length_of_ele < 0.)
 				return;
+			PlotCmd cmd;
 			if (length_of_ele < 1.e-5)
-				PlotCmd_to_tmpfile(PLOT_AT);
+				cmd = PLOT_AT;
 			else
-				PlotCmd_to_tmpfile(DRAW_TO);
+				cmd = DRAW_TO;
 
 			pa->x += dx * length_of_ele;
 			pa->y += dy * length_of_ele;
-			HPGL_Pt_to_tmpfile(pa);
+			HPGL_Pt_to_tmpfile(cmd, pa);
 
 			length_of_ele = (double) *p_cur_pat++ / 100;	/* Gap        */
 			if (length_of_ele < 0.)
 				return;
 			pa->x += dx * length_of_ele;
 			pa->y += dy * length_of_ele;
-			PlotCmd_to_tmpfile(MOVE_TO);
-			HPGL_Pt_to_tmpfile(pa);
+			HPGL_Pt_to_tmpfile(MOVE_TO, pa);
 	} else			/* LT_fixed */
 		for (end_of_action = 0.0;;) {
 	    /**
@@ -663,8 +670,7 @@ LPattern_Generator(HPGL_Pt * pa,
 				return;
 
 			if (length_of_ele < 1.e-5) {	/* Dot Only */
-				PlotCmd_to_tmpfile(PLOT_AT);
-				HPGL_Pt_to_tmpfile(pa);
+				HPGL_Pt_to_tmpfile(PLOT_AT, pa);
 			} else {	/* Line Segment */
 				end_of_action += length_of_ele;
 
@@ -677,10 +683,7 @@ LPattern_Generator(HPGL_Pt * pa,
 							pa->y +=
 							    dy *
 							    length_of_ele;
-							PlotCmd_to_tmpfile
-							    (DRAW_TO);
-							HPGL_Pt_to_tmpfile
-							    (pa);
+							HPGL_Pt_to_tmpfile(DRAW_TO, pa);
 						} else
 							/* End_of_action beyond End_of_pattern:   */
 						{	/* --> Draw only first part of element: */
@@ -692,10 +695,7 @@ LPattern_Generator(HPGL_Pt * pa,
 							    dy *
 							    (end_of_pat -
 							     start_of_action);
-							PlotCmd_to_tmpfile
-							    (DRAW_TO);
-							HPGL_Pt_to_tmpfile
-							    (pa);
+							HPGL_Pt_to_tmpfile(DRAW_TO, pa);
 							return;
 						}
 					} else
@@ -712,21 +712,16 @@ LPattern_Generator(HPGL_Pt * pa,
 							    (end_of_action
 							     -
 							     start_of_pat);
-							PlotCmd_to_tmpfile
-							    (DRAW_TO);
-							HPGL_Pt_to_tmpfile
-							    (pa);
+							HPGL_Pt_to_tmpfile(DRAW_TO, pa);
 						} else
 							/* End_of_action beyond End_of_pattern:   */
 							/* Draw central part of element & leave   */
 						{
-							if (end_of_pat ==
-							    start_of_pat)
-								PlotCmd_to_tmpfile
-								    (PLOT_AT);
+							PlotCmd cmd;
+							if (end_of_pat == start_of_pat)
+								cmd = PLOT_AT;
 							else
-								PlotCmd_to_tmpfile
-								    (DRAW_TO);
+								cmd = DRAW_TO;
 							pa->x +=
 							    dx *
 							    (end_of_pat -
@@ -736,8 +731,7 @@ LPattern_Generator(HPGL_Pt * pa,
 							    (end_of_pat -
 							     start_of_pat);
 
-							HPGL_Pt_to_tmpfile
-							    (pa);
+							HPGL_Pt_to_tmpfile(cmd, pa);
 							return;
 						}
 					}
@@ -758,9 +752,7 @@ LPattern_Generator(HPGL_Pt * pa,
 						    dx * length_of_ele;
 						pa->y +=
 						    dy * length_of_ele;
-						PlotCmd_to_tmpfile
-						    (MOVE_TO);
-						HPGL_Pt_to_tmpfile(pa);
+						HPGL_Pt_to_tmpfile(MOVE_TO, pa);
 					} else
 						/* End_of_action beyond End_of_pattern:   */
 					{	/* --> Apply only first part of gap:    */
@@ -770,9 +762,7 @@ LPattern_Generator(HPGL_Pt * pa,
 						pa->y +=
 						    dy * (end_of_pat -
 							  start_of_action);
-						PlotCmd_to_tmpfile
-						    (MOVE_TO);
-						HPGL_Pt_to_tmpfile(pa);
+						HPGL_Pt_to_tmpfile(MOVE_TO, pa);
 						return;
 					}
 				} else
@@ -785,9 +775,7 @@ LPattern_Generator(HPGL_Pt * pa,
 						pa->y +=
 						    dy * (end_of_action -
 							  start_of_pat);
-						PlotCmd_to_tmpfile
-						    (MOVE_TO);
-						HPGL_Pt_to_tmpfile(pa);
+						HPGL_Pt_to_tmpfile(MOVE_TO, pa);
 					} else
 						/* End_of_action beyond End_of_pattern:   */
 						/* Apply central part of gap & leave      */
@@ -801,9 +789,7 @@ LPattern_Generator(HPGL_Pt * pa,
 						pa->y +=
 						    dy * (end_of_pat -
 							  start_of_pat);
-						PlotCmd_to_tmpfile
-						    (MOVE_TO);
-						HPGL_Pt_to_tmpfile(pa);
+						HPGL_Pt_to_tmpfile(MOVE_TO, pa);
 						return;
 					}
 				}
@@ -1109,8 +1095,7 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 				    ("Warning: Zero line segment length -- skipped\n");
 			return;	/* No line to draw ??           */
 		}
-		PlotCmd_to_tmpfile(DRAW_TO);
-		HPGL_Pt_to_tmpfile(pb);
+		HPGL_Pt_to_tmpfile(DRAW_TO, pb);
 		return;
 
 	case LT_adaptive:
@@ -1139,8 +1124,7 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 		return;
 
 	case LT_plot_at:
-		PlotCmd_to_tmpfile(PLOT_AT);
-		HPGL_Pt_to_tmpfile(pb);
+		HPGL_Pt_to_tmpfile(PLOT_AT, pb);
 		return;
 
 	case LT_fixed:
@@ -1170,8 +1154,7 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 			LPattern_Generator(pa, dx, dy, pat_pos, quot);
 			pat_pos = quot;
 		} else {
-			PlotCmd_to_tmpfile(MOVE_TO);
-			HPGL_Pt_to_tmpfile(pb);
+			HPGL_Pt_to_tmpfile(MOVE_TO, pb);
 		}
 		return;
 
@@ -1220,8 +1203,7 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 
 	case DRAW_TO:
 		if (mv_flag) {
-			PlotCmd_to_tmpfile(MOVE_TO);
-			HPGL_Pt_to_tmpfile(&P_last);
+			HPGL_Pt_to_tmpfile(MOVE_TO, &P_last);
 		}
 		/* drop through */
 	case PLOT_AT:
