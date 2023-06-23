@@ -2201,7 +2201,6 @@ static void fwedges(void * hd, float cur_pensize)
 	double phi;
 	double SafeLinePatLen = CurrentLinePatLen;
 	int outside = 0;
-	int i;
 
 	if (read_float(&r, hd))	/* No radius found      */
 		return;
@@ -2255,7 +2254,6 @@ static void fwedges(void * hd, float cur_pensize)
 		/*      Pattern length = chord length           */
 		CurrentLinePatLen = HYPOT(p.x, p.y);
 	}
-	i = 1;
 	for (phi = eps; phi <= sweep; phi += eps) {
 		oldp = p;
 		p.x = center.x + r * cos(start + phi);
