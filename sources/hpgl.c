@@ -660,6 +660,48 @@ DBG printf("DEF_PW\n");
 	}
 }
 
+void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
+{
+	PEN_N tp;
+	PEN_C r, g, b;
+
+	tp = (PEN_N) pen;
+	r = (PEN_C) red;
+	g = (PEN_C) green;
+	b = (PEN_C) blue;
+
+	if (record_off)		/* Wrong page!  */
+		return;
+
+DBG printf("DEF_PC\n");
+	if (write_c((int) DEF_PC, td) == EOF) {
+		PError("PlotCmd_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tp, sizeof(tp), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - pen");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&r, sizeof(r), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - red component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&g, sizeof(g), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - green component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&b, sizeof(b), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - blue component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
 void HPGL_Pt_to_polygon(HPGL_Pt pf)
 {
 	if (record_off)		/* Wrong page!  */
@@ -2858,7 +2900,6 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			else
 				myblue = 255 * (ftmp - b_base) / b_max;
 			pg->is_color = TRUE;
-			PlotCmd_to_tmpfile(DEF_PC);
 			if (mypen == 0 && pg->mapzero > -1)
 				mypen = pg->mapzero;
 			Pen_Color_to_tmpfile(mypen, myred, mygreen,
