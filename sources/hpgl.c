@@ -497,6 +497,33 @@ static void Plotter_to_User_coord(const HPGL_Pt * p_plot, HPGL_Pt * p_usr)
 
 #define DBG if(0)
 
+int write_c(int c, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fputc(c, f);
+}
+
+size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fwrite((void*)ptr, size, nmemb, f);
+}
+
+int read_c(void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	int c = getc(hd);
+	if (c == EOF)
+		return EOF;
+	return c;
+}
+
+void unread_c(int c, void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	ungetc(c, hd);
+}
+
 void PlotCmd_to_tmpfile(PlotCmd cmd)
 {
 	if (record_off)		/* Wrong page!  */
@@ -1209,34 +1236,6 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 	}
 	P_last = P;
 }
-
-int write_c(int c, void *ctx)
-{
-	FILE *f = (FILE*)ctx; 
-	return fputc(c, f);
-}
-
-size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx)
-{
-	FILE *f = (FILE*)ctx; 
-	return fwrite((void*)ptr, size, nmemb, f);
-}
-
-int read_c(void *ctx)
-{
-	FILE *hd = (FILE*) ctx;
-	int c = getc(hd);
-	if (c == EOF)
-		return EOF;
-	return c;
-}
-
-void unread_c(int c, void *ctx)
-{
-	FILE *hd = (FILE*) ctx;
-	ungetc(c, hd);
-}
-
 
 int read_float(float *pnum, void *hd)
 /**
