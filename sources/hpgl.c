@@ -1264,7 +1264,7 @@ int read_float(float *pnum, void *hd)
 		unread_c(c, hd);
 
 	if (sscanf(numbuf, "%f", pnum) != 1)
-		return 11;	/* Should never happen  */
+		return 2;	/* Should never happen  */
 	return 0;
 }
 
