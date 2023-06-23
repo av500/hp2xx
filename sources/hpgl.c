@@ -4123,7 +4123,6 @@ PlotCmd PlotCmd_from_tmpfile(void)
 	case DEF_PC:
 	case DEF_LA:
 		return cmd;
-	case (unsigned int) EOF:
 	default:
 		return CMD_EOF;
 	}
