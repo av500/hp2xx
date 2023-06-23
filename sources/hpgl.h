@@ -3,8 +3,11 @@
 #include "bresnham.h"
 #include "hp2xx.h"
 
-int read_float (float *pnum, FILE * hd);
-void read_string (char *target, FILE *);
+int read_c(void *ctx);
+void unread_c(int c, void *ctx);
+int read_float (float *pnum, void * hd);
+void read_string (char *target, void *);
+
 void PlotCmd_to_tmpfile (PlotCmd cmd);
 
 void HPGL_Pt_to_tmpfile (const HPGL_Pt * pf);

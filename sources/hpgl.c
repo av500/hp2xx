@@ -929,7 +929,7 @@ static void rects(int relative, int filled, float cur_pensize, FILE * hd)
    int pen;
    } ;
  */
-int read_PE_flags(GEN_PAR * pg, int c, FILE * hd, PE_flags * fl)
+int read_PE_flags(GEN_PAR * pg, int c, void * hd, PE_flags * fl)
 {
 	short old_pen;
 	float ftmp;
@@ -951,7 +951,7 @@ int read_PE_flags(GEN_PAR * pg, int c, FILE * hd, PE_flags * fl)
 	case 186:
 	case ':':
 		/* select pen */
-		if (EOF == (fl->pen = getc(hd))) {
+		if (EOF == (fl->pen = read_c(hd))) {
 			par_err_exit(98, PE, hd);
 		}
 		old_pen = pen;
@@ -984,7 +984,7 @@ int read_PE_flags(GEN_PAR * pg, int c, FILE * hd, PE_flags * fl)
 	case '>':
 		/* fractional data */
 
-		if (EOF == (ctmp = getc(hd))) {
+		if (EOF == (ctmp = read_c(hd))) {
 			par_err_exit(98, PE, hd);
 		}
 		fl->fract = decode_PE_char(ctmp, fl);
@@ -1033,7 +1033,7 @@ int decode_PE_char(int c, PE_flags * fl)
 	}
 }
 
-int read_PE_coord(int c, FILE * hd, PE_flags * fl, float *fv)
+int read_PE_coord(int c, void * hd, PE_flags * fl, float *fv)
 {
 	long lv = 0;
 	int i = 0;
@@ -1045,7 +1045,7 @@ int read_PE_coord(int c, FILE * hd, PE_flags * fl, float *fv)
 				Eprintf("error in PE data!\n");
 				return 0;
 			}
-			ungetc(c, hd);
+			unread_c(c, hd);
 			break;
 		}
 		lv |= ((long) decode_PE_char(c, fl)) << (i * shft);
@@ -1053,7 +1053,7 @@ int read_PE_coord(int c, FILE * hd, PE_flags * fl, float *fv)
 		if (isPEterm(c, fl)) {
 			break;
 		}
-		if (EOF == (c = getc(hd))) {
+		if (EOF == (c = read_c(hd))) {
 			par_err_exit(98, PE, hd);
 		}
 	}
@@ -1062,11 +1062,11 @@ int read_PE_coord(int c, FILE * hd, PE_flags * fl, float *fv)
 }
 
 
-int read_PE_pair(int c, FILE * hd, PE_flags * fl, HPGL_Pt * p)
+int read_PE_pair(int c, void * hd, PE_flags * fl, HPGL_Pt * p)
 {
 	if (!read_PE_coord(c, hd, fl, &(p->x)))
 		return 0;
-	if (EOF == (c = getc(hd))) {
+	if (EOF == (c = read_c(hd))) {
 		par_err_exit(98, PE, hd);
 	}
 	if (!read_PE_coord(c, hd, fl, &(p->y)))
@@ -1077,7 +1077,7 @@ int read_PE_pair(int c, FILE * hd, PE_flags * fl, HPGL_Pt * p)
 
 
 
-void read_PE(GEN_PAR * pg, FILE * hd)
+void read_PE(GEN_PAR * pg, void * hd)
 {
 	int c;
 
@@ -1090,7 +1090,7 @@ void read_PE(GEN_PAR * pg, FILE * hd)
 	fl.up = 0;
 	fl.pen = 0;
 
-	for (c = getc(hd); (c != EOF) && (c != ';'); c = getc(hd)) {
+	for (c = read_c(hd); (c != EOF) && (c != ';'); c = read_c(hd)) {
 		if (!read_PE_flags(pg, c, hd, &fl)) {
 			if (!read_PE_pair(c, hd, &fl, &p))
 				continue;
@@ -1281,11 +1281,23 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 	P_last = P;
 }
 
+int read_c(void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	int c = getc(hd);
+	if (c == EOF)
+		return EOF;
+	return c;
+}
+
+void unread_c(int c, void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	ungetc(c, hd);
+}
 
 
-
-
-int read_float(float *pnum, FILE * hd)
+int read_float(float *pnum, void *hd)
 /**
  ** Main work-horse for parameter input:
  **
@@ -1300,28 +1312,28 @@ int read_float(float *pnum, FILE * hd)
 	int c;
 	char *ptr, numbuf[80];
 
-	for (c = getc(hd);
+	for (c = read_c(hd);
 	     (c != '.') && (c != '+') && (c != '-') && ((c < '0')
 							|| (c > '9'));
-	     c = getc(hd)) {
+	     c = read_c(hd)) {
 		if (c == EOF)	/* Wait for number      */
 			return EOF;	/* Should not happen    */
 		if (c == ';')
 			return 1;	/* Terminator reached   */
 		if (((c >= 'A') && (c <= 'Z')) ||
 		    ((c >= 'a') && (c <= 'a')) || (c == ESC)) {
-			ungetc(c, hd);
+			unread_c(c, hd);
 			return 1;	/* Next Mnemonic reached */
 		}
 	}
 	/* Number found: Get it */
 	ptr = numbuf;
-	for (*ptr++ = c, c = getc(hd);
-	     ((c >= '0') && (c <= '9')) || (c == '.'); c = getc(hd))
+	for (*ptr++ = c, c = read_c(hd);
+	     ((c >= '0') && (c <= '9')) || (c == '.'); c = read_c(hd))
 		*ptr++ = c;	/* Read number          */
 	*ptr = '\0';
 	if (c != EOF)
-		ungetc(c, hd);
+		unread_c(c, hd);
 
 	if (sscanf(numbuf, "%f", pnum) != 1)
 		return 11;	/* Should never happen  */
@@ -1331,13 +1343,13 @@ int read_float(float *pnum, FILE * hd)
 
 
 
-void read_string(char *buf, FILE * hd)
+void read_string(char *buf, void *hd)
 {
 	int c;
 	unsigned int n;
 
-	for (n = 0, c = getc(hd); (c != EOF) && (c != StrTerm);
-	     c = getc(hd)) {
+	for (n = 0, c = read_c(hd); (c != EOF) && (c != StrTerm);
+	     c = read_c(hd)) {
 		if (n > strbufsize / 2) {
 			strbufsize *= 2;
 			strbuf = realloc(strbuf, strbufsize);
@@ -1360,11 +1372,11 @@ void read_string(char *buf, FILE * hd)
 
 
 
-static void read_symbol_char(FILE * hd)
+static void read_symbol_char(void * hd)
 {
 	int c;
 
-	for (c = getc(hd); /* ended by switch{} */ ; c = getc(hd))
+	for (c = read_c(hd); /* ended by switch{} */ ; c = read_c(hd))
 		switch (c) {
 		case ' ':
 		case _HT:
@@ -1388,14 +1400,14 @@ static void read_symbol_char(FILE * hd)
 
 
 
-static void read_ESC_HP7550A(FILE * hd)
+static void read_ESC_HP7550A(void * hd)
 /*
  * Read & skip HP 7550A control commands (ESC.-Commands)
  */
 {
 	int c;
 
-	switch (getc(hd)) {
+	switch (read_c(hd)) {
 	case EOF:
 		n_unexpected++;
 		Eprintf("\nUnexpected EOF!\n");
@@ -1423,7 +1435,7 @@ static void read_ESC_HP7550A(FILE * hd)
 	case 'S':
 	case 'T':
 		do {		/* Search for terminator ':'    */
-			c = getc(hd);
+			c = read_c(hd);
 		}
 		while ((c != ':') && (c != EOF));
 		if (c == EOF) {
@@ -1438,7 +1450,7 @@ static void read_ESC_HP7550A(FILE * hd)
 }
 
 
-static int read_PJL(FILE * hd)
+static int read_PJL(void * hd)
 /*
  * a simple PJL parser
  * just reads PJL header and
@@ -1463,11 +1475,11 @@ static int read_PJL(FILE * hd)
 	for (;;) {
 		/* read word */
 		for (i = ov = qt = 0;; i++) {
-			ctmp = getc(hd);
+			ctmp = read_c(hd);
 			if (ctmp == ESC) {
 				while (ctmp != 'X')
-					ctmp = getc(hd);
-				ctmp = getc(hd);
+					ctmp = read_c(hd);
+				ctmp = read_c(hd);
 			}
 			if (PJLBS - 1 == i) {
 				if (!silent_mode)
@@ -1537,10 +1549,10 @@ static int read_PJL(FILE * hd)
 		/* read separator */
 		for (j = 0; EOF != ctmp; j++) {
 			if (!strchr(" \t\n\r", ctmp)) {
-				ungetc(ctmp, hd);
+				unread_c(ctmp, hd);
 				break;
 			}
-			ctmp = getc(hd);
+			ctmp = read_c(hd);
 			if ('\n' == ctmp) {
 				nl = 1;
 			}
@@ -1563,7 +1575,7 @@ static int read_PJL(FILE * hd)
 	}
 }
 
-static void read_ESC_RTL(FILE * hd, int c1, int hp)
+static void read_ESC_RTL(void * hd, int c1, int hp)
 /*
  *read and skip ESC% control commands
  */
@@ -1587,12 +1599,12 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 	 */
 	int c0, c2, ctmp = 0, nf;
 
-	for (c0 = ESC, c2 = getc(hd), nf = 0;
-	     EOF != c2; c0 = c1, c1 = c2, c2 = getc(hd)) {
+	for (c0 = ESC, c2 = read_c(hd), nf = 0;
+	     EOF != c2; c0 = c1, c1 = c2, c2 = read_c(hd)) {
 
 		if ((ESC == c0) && (c1 == '%')) {
 			if ('-' == c2) {
-				c2 = getc(hd);
+				c2 = read_c(hd);
 				nf = 1;
 			}
 			switch (c2) {
@@ -1603,7 +1615,7 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 				break;
 			case '1':
 			case '0':
-				switch (ctmp = getc(hd)) {
+				switch (ctmp = read_c(hd)) {
 				case 'A':
 
 					if (hp && !silent_mode) {
@@ -1624,10 +1636,10 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 				case '2':
 					/* check for UEL */
 					if (nf && '1' == c2 &&
-					    '3' == (c2 = getc(hd)) &&
-					    '4' == (c2 = getc(hd)) &&
-					    '5' == (c2 = getc(hd))
-					    && 'X' == (c2 = getc(hd))) {
+					    '3' == (c2 = read_c(hd)) &&
+					    '4' == (c2 = read_c(hd)) &&
+					    '5' == (c2 = read_c(hd))
+					    && 'X' == (c2 = read_c(hd))) {
 #ifdef DEBUG_ESC
 						if (!silent_mode)
 							Eprintf
@@ -1640,7 +1652,7 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 							continue;
 						}
 					} else {
-						ungetc(ctmp, hd);
+						unread_c(ctmp, hd);
 						if (hp)
 							return;
 					}
@@ -1651,7 +1663,7 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 						    ("unknown escape: ESC%%%s%c%c\n",
 						     nf ? "-" : "", c2,
 						     ctmp);
-					ungetc(ctmp, hd);
+					unread_c(ctmp, hd);
 					if (hp)
 						return;
 				}
@@ -1661,14 +1673,14 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 					Eprintf
 					    ("unknown escape: ESC%%%s%c",
 					     nf ? "-" : "", c2);
-				ungetc(ctmp, hd);
+				unread_c(ctmp, hd);
 				if (hp)
 					return;
 				break;
 			}
 		}
 		if (hp == TRUE && !nf && c1 != '%' && c1 != 'E') {
-			ungetc(ctmp, hd);
+			unread_c(ctmp, hd);
 			if (!silent_mode)
 				Eprintf("invalid escape ESC%c%c\n", c1,
 					c2);
@@ -1677,14 +1689,14 @@ static void read_ESC_RTL(FILE * hd, int c1, int hp)
 	}
 }
 
-static void read_ESC_cmd(FILE * hd, int hp)
+static void read_ESC_cmd(void * hd, int hp)
 /*
  * Read & skip device control commands (ESC.-Commands)
 
  */
 {
 	int ctmp;
-	switch (ctmp = getc(hd)) {
+	switch (ctmp = read_c(hd)) {
 	case '.':
 		read_ESC_HP7550A(hd);
 		break;
@@ -2182,7 +2194,7 @@ static void arcs(int relative, FILE * hd)
 	CurrentLinePatLen = SafeLinePatLen;	/* Restore */
 }
 
-static void fwedges(FILE * hd, float cur_pensize)
+static void fwedges(void * hd, float cur_pensize)
 {				/*derived from circles */
 	HPGL_Pt p, oldp, center;
 	float eps, r, start, sweep;
@@ -2286,7 +2298,7 @@ static void fwedges(FILE * hd, float cur_pensize)
 
 
 
-static void circles(FILE * hd)
+static void circles(void * hd)
 {
 	HPGL_Pt p, center, polyp;
 	float eps, r;
@@ -2413,7 +2425,7 @@ static void circles(FILE * hd)
 	CurrentLinePatLen = SafeLinePatLen;	/* Restore */
 }
 
-static void wedges(FILE * hd)
+static void wedges(void * hd)
 {				/*derived from circles */
 	HPGL_Pt p, center;
 	float eps, r, start, sweep;
@@ -2547,7 +2559,7 @@ static void ax_ticks(int mode)
  **	Process a single HPGL command
  **/
 
-static void read_HPGL_cmd(GEN_PAR * pg, int cmd, FILE * hd)
+static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 {
 	short old_pen;
 	HPGL_Pt p1 = { 0., 0. }, p2 = {
@@ -3447,8 +3459,8 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, FILE * hd)
 			} else {
 				switch ((int) ftmp) {
 				case 1:	/* picture name follows */
-					tmpstr[0] = fgetc(hd);	/* skip comma */
-					tmpstr[0] = fgetc(hd);
+					tmpstr[0] = read_c(hd);	/* skip comma */
+					tmpstr[0] = read_c(hd);
 					if (!silent_mode)
 						fprintf(stderr,
 							"HPGL picture name: %c",
@@ -3457,7 +3469,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, FILE * hd)
 						tmpstr[0] = ' ';
 						do {
 							tmpstr[0] =
-							    fgetc(hd);
+							    read_c(hd);
 							if (!silent_mode)
 								fputc
 								    (tmpstr
@@ -3605,7 +3617,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, FILE * hd)
 		adjust_text_par();
 		break;
 	case DT:		/* Define string terminator     */
-		StrTerm = getc(hd);
+		StrTerm = read_c(hd);
 		if (StrTerm == ';') {	/*just DT */
 			StrTerm = ETX;
 			StrTermSilent = 1;
@@ -3804,10 +3816,11 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 	n_commands = 0;
 	n_unknown = 0;
 
-	if ((c = getc(pi->hd)) == EOF)
+	void *ctx = (void*)pi->hd;
+	if ((c = read_c(ctx)) == EOF)
 		return;
 	else
-		ungetc(c, pi->hd);
+		unread_c(c, ctx);
 
 	if (!pg_flag)
 		init_HPGL(pg, pi);
@@ -3818,7 +3831,7 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
   /**
    ** MAIN parser LOOP!!
    **/
-	while ((c = getc(pi->hd)) != EOF) {
+	while ((c = read_c(ctx)) != EOF) {
 		switch (c) {
 #ifdef MUTOH_KLUGE
 		case '\a':
@@ -3834,7 +3847,7 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			    || ((c > 'Z') && (c < 'a')))
 				break;
 			if (c == 'P') {
-				if ((cmd = getc(pi->hd)) == 'G') {
+				if ((cmd = read_c(ctx)) == 'G') {
 					page_number++;
 /*		fprintf(stderr, "stream-reading PG: page_number now %d\n", page_number);*/
 					record_off =
@@ -3845,11 +3858,11 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 				} else {
 					if (cmd == EOF)
 						return;
-					ungetc(cmd, pi->hd);
+					unread_c(cmd, ctx);
 				}
 			}
 			if (c == 'N') {
-				if ((cmd = getc(pi->hd)) == 'R') {
+				if ((cmd = read_c(ctx)) == 'R') {
 /*	  fprintf(stderr,"***NR***\n");'*/
 					page_number++;
 /*		fprintf(stderr, "stream-reading NR: page_number now %d\n", page_number);*/
@@ -3861,11 +3874,11 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 				} else {
 					if (cmd == EOF)
 						return;
-					ungetc(cmd, pi->hd);
+					unread_c(cmd, ctx);
 				}
 			}
 			if (c == 'A') {
-				cmd = getc(pi->hd);
+				cmd = read_c(ctx);
 				if (cmd == 'F' || cmd == 'H') {
 /*	  fprintf(stderr,"***AF/AH***\n");*/
 					page_number++;
@@ -3878,15 +3891,15 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 				} else {
 					if (cmd == EOF)
 						return;
-					ungetc(cmd, pi->hd);
+					unread_c(cmd, ctx);
 				}
 			}
 			cmd = c << 8;
-			if ((c = getc(pi->hd)) == EOF)
+			if ((c = read_c(ctx)) == EOF)
 				return;
 			if ((c < 'A') || (c > 'z')
 			    || ((c > 'Z') && (c < 'a'))) {
-				ungetc(c, pi->hd);
+				unread_c(c, ctx);
 				break;
 			}
 			cmd |= (c & 0xFF);

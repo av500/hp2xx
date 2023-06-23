@@ -370,10 +370,10 @@ void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
 /*int read_float(float *, FILE *);*/
 double ceil_with_tolerance(double, double);
 void line(int relative, HPGL_Pt p);
-int read_PE_flags(GEN_PAR *, int, FILE *, PE_flags *);
-int read_PE_coord(int, FILE *, PE_flags *, float *);
-int read_PE_pair(int, FILE *, PE_flags *, HPGL_Pt *);
-void read_PE(GEN_PAR *, FILE *);
+int read_PE_flags(GEN_PAR *, int, void *, PE_flags *);
+int read_PE_coord(int, void *, PE_flags *, float *);
+int read_PE_pair(int, void *, PE_flags *, HPGL_Pt *);
+void read_PE(GEN_PAR *, void *);
 int decode_PE_char(int, PE_flags *);
 int isPEterm(int, PE_flags *);
 void to_ATARI(GEN_PAR *, FILE *);
