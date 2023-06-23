@@ -144,7 +144,6 @@ static void ASCII_to_char(int c)
 	LineEnds SafeLineEnd = CurrentLineEnd;
 
 	CurrentLineType = LT_solid;
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
 
 	switch (tp->font) {
@@ -799,7 +798,6 @@ static void ASCII_to_char(int c)
 	CurrentLineType = SafeLineType;
 
 	/* Restore Line Ends */
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
 
 }
@@ -1334,7 +1332,6 @@ void ASCII_to_font(int c)
 	LineEnds SafeLineEnd = CurrentLineEnd;
 
 	CurrentLineType = LT_solid;
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
 	if (c < 0)
 		c += 256;
@@ -1411,7 +1408,6 @@ void ASCII_to_font(int c)
 	tt_refpoint.y = 0;
 	/* Restore Line Ends */
 	CurrentLineType = SafeLineType;
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
 }
 

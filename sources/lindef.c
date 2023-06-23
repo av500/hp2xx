@@ -187,14 +187,11 @@ void print_line_style(void)
 
 void set_line_attr_defaults(void)
 {
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrEnd, LAE_butt);
 #define LA_JOINS_LIMIT_SUPPORT 1
 #ifdef LA_JOINS_LIMIT_SUPPORT
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrJoin, LAJ_plain_miter);
 
-	PlotCmd_to_tmpfile(DEF_LA);
 	Line_Attr_to_tmpfile(LineAttrLimit, 5);	/* 5 times line width */
 #endif
 }
@@ -219,8 +216,6 @@ void set_line_attr(FILE * hd)
 			return;
 		}
 		itmp = (int) ftmp2;
-
-		PlotCmd_to_tmpfile(DEF_LA);
 
 		switch ((int) ftmp1) {
 		case 1:
@@ -248,32 +243,6 @@ void set_line_attr(FILE * hd)
 			return;
 		}
 	}
-	return;
-}
-
-void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
-{
-	LineAttrKind tk = kind;
-	LineEnds tv = value;
-
-	if (record_off)		/* return if current plot is not the selected one */
-		return;		/* (of a multi-image file) */
-
-	if (kind == LineAttrEnd)	/* save this so we may save/restore the current state before character draw */
-		CurrentLineEnd = value;
-
-	if (fwrite(&tk, sizeof(tk), 1, td) != 1) {
-		PError("Line_Attr_to_tmpfile - kind");
-		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
-	}
-
-	if (fwrite(&tv, sizeof(tv), 1, td) != 1) {
-		PError("Line_Attr_to_tmpfile - value");
-		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
-	}
-
 	return;
 }
 

@@ -587,6 +587,38 @@ DBG printf("CMD %d  Pt  %8.3f %8.3f\n", cmd, pf->x, pf->y);
 	ymax = MAX(pf->y, ymax);
 }
 
+void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
+{
+	LineAttrKind tk = kind;
+	LineEnds tv = value;
+
+	if (record_off)		/* return if current plot is not the selected one */
+		return;		/* (of a multi-image file) */
+
+	if (kind == LineAttrEnd)	/* save this so we may save/restore the current state before character draw */
+		CurrentLineEnd = value;
+
+DBG printf("DEF_LA\n");
+	if (write_c((int) DEF_LA, td) == EOF) {
+		PError("PlotCmd_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tk, sizeof(tk), 1, td) != 1) {
+		PError("Line_Attr_to_tmpfile - kind");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tv, sizeof(tv), 1, td) != 1) {
+		PError("Line_Attr_to_tmpfile - value");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	return;
+}
 
 void HPGL_Pt_to_polygon(HPGL_Pt pf)
 {
