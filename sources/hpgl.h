@@ -8,6 +8,9 @@ void unread_c(int c, void *ctx);
 int read_float (float *pnum, void * hd);
 void read_string (char *target, void *);
 
+int write_c(int c, void *ctx);
+size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx);
+
 void PlotCmd_to_tmpfile (PlotCmd cmd);
 
 void HPGL_Pt_to_tmpfile (const HPGL_Pt * pf);
@@ -29,5 +32,5 @@ extern short silent_mode;
 extern long vec_cntr_w;
 extern long n_commands;
 extern short record_off;
-extern FILE *td;
+extern FILE *temp_file;
 

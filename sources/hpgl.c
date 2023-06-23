@@ -150,7 +150,9 @@ short record_off = FALSE;
 long vec_cntr_w = 0L;
 long n_commands = 0L;
 short silent_mode = FALSE;
-FILE *td;
+
+void *td;
+FILE *temp_file;
 
 HPGL_Pt HP_pos = { 0, 0 };	/* Actual plotter pen position  */
 HPGL_Pt P1 = { P1X_default, P1Y_default };	/* Scaling points */
@@ -440,7 +442,9 @@ static void init_HPGL(GEN_PAR * pg, const IN_PAR * pi)
  ** Re-init. global var's for multiple-file applications
  **/
 /*fprintf(stderr,"init_HPGL\n");*/
-	td = pg->td;
+	temp_file = pg->td;
+	td = (void*)temp_file;
+	
 	silent_mode = (short) pg->quiet;
 	xmin = pi->x0;
 	ymin = pi->y0;
@@ -592,8 +596,7 @@ void PlotCmd_to_tmpfile(PlotCmd cmd)
 			Eprintf("10000k ");
 			break;
 		}
-
-	if (fputc((int) cmd, td) == EOF) {
+	if (write_c((int) cmd, td) == EOF) {
 		PError("PlotCmd_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
@@ -608,7 +611,7 @@ void HPGL_Pt_to_tmpfile(const HPGL_Pt * pf)
 	if (record_off)		/* Wrong page!  */
 		return;
 
-	if (fwrite((VOID *) pf, sizeof(*pf), 1, td) != 1) {
+	if (write_bytes((VOID *) pf, sizeof(*pf), 1, td) != 1) {
 		PError("HPGL_Pt_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
@@ -967,8 +970,8 @@ int read_PE_flags(GEN_PAR * pg, int c, void * hd, PE_flags * fl)
 		if (pen == 0 && pg->mapzero > -1)
 			pen = pg->mapzero;
 		if (old_pen != pen) {
-			if ((fputc(SET_PEN, td) == EOF)
-			    || (fputc(pen, td) == EOF)) {
+			if ((write_c(SET_PEN, td) == EOF)
+			    || (write_c(pen, td) == EOF)) {
 				PError("Writing to temporary file:");
 				Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 				exit(ERROR);
@@ -1279,6 +1282,18 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 		exit(ERROR);
 	}
 	P_last = P;
+}
+
+int write_c(int c, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fputc(c, f);
+}
+
+size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fwrite((void*)ptr, size, nmemb, f);
 }
 
 int read_c(void *ctx)
@@ -3437,8 +3452,8 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			pen = pen % pg->maxpens;
 		}
 		if (old_pen != pen) {
-			if ((fputc(SET_PEN, td) == EOF)
-			    || (fputc(pen, td) == EOF)) {
+			if ((write_c(SET_PEN, td) == EOF)
+			    || (write_c(pen, td) == EOF)) {
 				PError("Writing to temporary file:");
 				Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 				exit(ERROR);
