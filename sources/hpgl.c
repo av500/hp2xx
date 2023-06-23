@@ -556,7 +556,7 @@ void Speed_to_tmpfile(int speed)
 		return;
 
 DBG printf("VS  %d\n", speed);
-	if (write_c((int) SET_PEN, td) == EOF || write_c(pen, td) == EOF) {
+	if (write_c((int) SET_SPEED, td) == EOF || write_c(speed, td) == EOF) {
 		PError("Pen_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
 		exit(ERROR);
