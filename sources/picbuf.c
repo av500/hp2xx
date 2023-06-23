@@ -829,6 +829,12 @@ void tmpfile_to_PicBuf(const GEN_PAR * pg, const OUT_PAR * po)
 			}
 			consecutive = 0;
 			break;
+		case SET_SPEED:
+			if ((pen_no = fgetc(pg->td)) == EOF) {
+				PError("Unexpected end of temp. file");
+				exit(ERROR);
+			}
+			break;
 		case DEF_PW:
 			if (!load_pen_width_table(pg->td)) {
 				PError("Unexpected end of temp. file");

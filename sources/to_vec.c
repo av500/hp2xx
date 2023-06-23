@@ -431,6 +431,14 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 			}
 			break;
 
+		case SET_SPEED:
+			if ((pen_no = fgetc(pg->td)) == EOF) {
+				PError("Unexpected end of temp. file: ");
+				err = ERROR;
+				goto MF_exit;
+			}
+			break;
+
 		case DEF_PW:
 			if (load_pen_width_table(pg->td) < 0) {
 				PError("Unexpected end of temp. file");

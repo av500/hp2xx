@@ -233,7 +233,7 @@ typedef enum {
 	DEF_PC, 	// 6
 	DEF_LA,		// 7
 	CMD_EOF,	// 8
-	CMD_SPEED	// 9
+	SET_SPEED,	// 9
 } PlotCmd;
 
 

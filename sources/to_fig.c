@@ -137,6 +137,14 @@ int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 				figmode = FIG_NONE;
 			break;
 
+		case SET_SPEED:
+			if ((pen_no = fgetc(pg->td)) == EOF) {
+				PError("Unexpected end of temp. file: ");
+				err = ERROR;
+				goto FIG_exit;
+			}
+			break;
+
 		case DEF_PW:
 			if (!load_pen_width_table(pg->td)) {
 				PError("Unexpected end of temp. file");

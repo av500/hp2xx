@@ -274,6 +274,13 @@ int to_rgip(const GEN_PAR * pg, const OUT_PAR * po)
 				       pt.clut[pencolor][2] / 255.0);
 			break;
 
+		case SET_SPEED:
+			if ((pen_no = fgetc(pg->td)) == EOF) {
+				PError("Unexpected end of temp. file: ");
+				exit(ERROR);
+			}
+			break;
+
 		case DEF_PC:
 			if (!load_pen_color_table(pg->td)) {
 				PError("Unexpected end of temp. file");

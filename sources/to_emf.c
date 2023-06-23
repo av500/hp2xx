@@ -174,6 +174,13 @@ static int plotit(HANDLE outDC, const GEN_PAR * pg, const OUT_PAR * po)
 				    pt.clut[pencolor][1],
 				    pt.clut[pencolor][2], &pt1, outDC);
 			break;
+		case SET_SPEED:
+			if ((pen_no = fgetc(pg->td)) == EOF) {
+				PError("Unexpected end of temp. file: ");
+				err = ERROR;
+				goto emf_exit;
+			}
+			break;
 		case DEF_PW:	// DEFine penwidth
 			if (!load_pen_width_table(pg->td)) {
 				PError("Unexpected end of temp. file");

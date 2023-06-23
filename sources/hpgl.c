@@ -4066,6 +4066,7 @@ PlotCmd PlotCmd_from_tmpfile(void)
 	case DRAW_TO:
 	case PLOT_AT:
 	case SET_PEN:
+	case SET_SPEED:
 	case DEF_PW:
 	case DEF_PC:
 	case DEF_LA:
