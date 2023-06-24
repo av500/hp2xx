@@ -221,16 +221,6 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
 		}
 	}
   /**
-   ** Open temporary intermediate file.
-   **/
-
-	if ((pg->td = tmpfile()) == NULL)
-	{
-		PError("hp2xx -- opening temporary file");
-		return ERROR;
-	}
-
-  /**
    ** Convert HPGL data into compact temporary binary file, and obtain
    ** scaling data (xmin/xmax/ymin/ymax in plotter coordinates)
    **/
