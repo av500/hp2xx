@@ -13,13 +13,13 @@ void Eprintf(const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
+	vprintf(fmt, ap);
 	va_end(ap);
 }
 
 void PError(const char *msg)
 {
-	perror(msg);
+	printf("ERROR: %s", msg);
 }
 
 static void __reset_par(IN_PAR * pi)
@@ -245,7 +245,9 @@ int main(int argc, char *argv[])
 
 	Pi.in_file = argv[1];
 	
-	int err = HPGL_to_TMP(&Pg, &Pi);
+	if(HPGL_to_TMP(&Pg, &Pi)) {
+printf("error!\n");		
+	}
 
 	__cleanup(&Pg, &Pi);
 	return NOERROR;
