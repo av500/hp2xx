@@ -1412,7 +1412,7 @@ int tt_stroke_moveto(FT_Vector * to, void *dummy)
 {
 	HPGL_Pt p;
 #if 0
-	fprintf(stderr, "TT move to %ld %ld (oder ists %d %d ??)\n", to->x,
+	fprintf(stderr, "TT move to %ld %ld (or is it %d %d ?)\n", to->x,
 		to->y, (int) (to->x / 64.), (int) (to->y / 64.));
 #endif
 	p.x = tp->Txx * to->x + tp->Txy * to->y;

@@ -95,7 +95,7 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 
 	float offset = width / 2.;
 
-	DevPt pt, ptx, ml1, ml2, ml1b, ml2b;
+	DevPt pt, ml1, ml2, ml1b, ml2b;
 
 	int d0, d1;		/* difference terms d0=perpendicular to line, d1=along line */
 
@@ -172,7 +172,6 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 		murphy.last2.x = -10000000;
 		murphy.last2.y = -10000000;
 	}
-	ptx = pt;
 
 	for (q = 0; dd <= tk; q++) {	/* outer loop, stepping perpendicular to line */
 
