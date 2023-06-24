@@ -145,7 +145,6 @@ long n_commands = 0L;
 short silent_mode = FALSE;
 
 void *td;
-FILE *temp_file;
 
 HPGL_Pt HP_pos = { 0, 0 };	/* Actual plotter pen position  */
 HPGL_Pt P1 = { P1X_default, P1Y_default };	/* Scaling points */
@@ -426,8 +425,7 @@ static void init_HPGL(GEN_PAR * pg, const IN_PAR * pi)
  ** Re-init. global var's for multiple-file applications
  **/
 /*fprintf(stderr,"init_HPGL\n");*/
-	temp_file = pg->td;
-	td = (void*)temp_file;
+	td = (void*)pg->td;
 	
 	silent_mode = (short) pg->quiet;
 	xmin = pi->x0;
@@ -3952,8 +3950,6 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 		Eprintf("\nMax. number of pages: %d\n", page_number - 1);
 	}
 }
-
-
 
 
 void
