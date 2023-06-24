@@ -85,15 +85,15 @@ typedef struct {
  ** pref is a pointer to the current text reference point (origin):
  **/
 
-	double Txx, Txy, Tyx, Tyy;	/* Transformation matrix        */
+	float Txx, Txy, Tyx, Tyy;	/* Transformation matrix        */
 	HPGL_Pt chardiff,	/* Horiz. distance between characters   */
 	 linediff,		/* Vertical distance between characters */
 	 refpoint,		/* Current reference point      */
 	 CR_point,		/* Returns point after a <CR>   */
 	 offset;		/* Needed for HP-GL command ``LO;''     */
-	double strokewidth;	/* current stroke weight (or 9999. for current PW */
-	double sstrokewidth;	/* stdfont stroke weight (or 9999. for current PW */
-	double astrokewidth;	/* altfont stroke weight (or 9999. for current PW */
+	float strokewidth;	/* current stroke weight (or 9999. for current PW */
+	float sstrokewidth;	/* stdfont stroke weight (or 9999. for current PW */
+	float astrokewidth;	/* altfont stroke weight (or 9999. for current PW */
 } TEXTPAR, *TextPar;
 
 

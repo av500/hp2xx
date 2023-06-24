@@ -14,21 +14,21 @@ void fill(HPGL_Pt polygon[], int numpoints, HPGL_Pt point1,
 	  float hatchangle)
 {
 	typedef struct {
-		double x, y;
+		float x, y;
 	} HPGL_Pt2;
-	double pxmin, pxmax, pymin, pymax;
-	double polyxmin, polyymin, polyxmax, polyymax;
-	double scanx1, scanx2, scany1, scany2;
+	float pxmin, pxmax, pymin, pymax;
+	float polyxmin, polyymin, polyxmax, polyymax;
+	float scanx1, scanx2, scany1, scany2;
 	HPGL_Pt2 segment[MAXPOLY], tmp;
-	double segx, segy;
+	float segx, segy;
 	static int i;		/* to please valgrind when debugging memory accesses */
 	int j, k, jj, kk;
 	int numlines;
-	double penwidth;
+	float penwidth;
 	HPGL_Pt p;
-	double rot_ang;
-	double pxdiff = 0., pydiff = 0.;
-	double avx, avy, bvx, bvy, ax, ay, bx, by, atx, aty, btx, bty, mu;
+	float rot_ang;
+	float pxdiff = 0., pydiff = 0.;
+	float avx, avy, bvx, bvy, ax, ay, bx, by, atx, aty, btx, bty, mu;
 	PEN_W SafePenW = pt.width[1];
 	LineEnds SafeLineEnd = CurrentLineEnd;
 	CurrentLineEnd = LAE_butt;
@@ -119,7 +119,7 @@ return;
 		pydiff = tan(M_PI * hatchangle / 180.) * pxdiff;
 	for (i = 0; i <= numlines; i++) {	/* for all scanlines ... */
 		k = -1;
-		scany1 = pymin + (double) i *penwidth;
+		scany1 = pymin + (float) i *penwidth;
 		scany2 = scany1 + pydiff;
 		if (scany1 >= pymax || scany1 <= pymin) {
 /*fprintf(stderr,"zu weit\n");*/
@@ -158,19 +158,19 @@ return;
 				continue;
 
 			if ((segy <
-			     MIN((double) polygon[j].y,
-				 (double) polygon[j + 1].y) - 0.0000001)
+			     MIN((float) polygon[j].y,
+				 (float) polygon[j + 1].y) - 0.0000001)
 			    || (segy >
-				MAX((double) polygon[j].y,
-				    (double) polygon[j + 1].y) +
+				MAX((float) polygon[j].y,
+				    (float) polygon[j + 1].y) +
 				0.000000001)
 			    || (segx <
-				MIN((double) polygon[j].x,
-				    (double) polygon[j + 1].x) -
+				MIN((float) polygon[j].x,
+				    (float) polygon[j + 1].x) -
 				0.000000001)
 			    || (segx >
-				MAX((double) polygon[j].x,
-				    (double) polygon[j + 1].x))) {
+				MAX((float) polygon[j].x,
+				    (float) polygon[j + 1].x))) {
 /*fprintf(stderr,"intersection  at %f %f is not within (%f,%f)-(%f,%f)\n",segx,segy,polygon[j].x,polygon[j].y,polygon[j+1].x,polygon[j+1].y ) ; */
 			} else {
 				for (kk = 0; kk <= k; kk++) {
@@ -279,7 +279,7 @@ return;
 		pxdiff = tan(M_PI * hatchangle / 180.) * (pymax - pymin);
 	for (i = 0; i <= numlines; ++i) {	/* for all scanlines ... */
 		k = -1;
-		scanx1 = pxmin + (double) i *penwidth;
+		scanx1 = pxmin + (float) i *penwidth;
 		if (scanx1 >= pxmax || scanx1 <= pxmin)
 			continue;
 		scanx2 = scanx1 - pxdiff;

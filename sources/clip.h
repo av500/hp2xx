@@ -22,15 +22,15 @@ extern "C" {
  *  weil nichts zu zeichnen ist
  */
 
-	extern short DtClipLine(double xmin, double ymin,	/* Linke untere Ecke des Clip-Bereichs */
-				double xmax, double ymax,	/* Rechte obere Ecke des Clip-Bereichs */
-				double *x1, double *y1,	/* Pointer auf Startpunkt der Linie */
-				double *x2, double *y2);	/* Pointer auf Endpunkt der Linie */
+	extern short DtClipLine(float xmin, float ymin,	/* Linke untere Ecke des Clip-Bereichs */
+				float xmax, float ymax,	/* Rechte obere Ecke des Clip-Bereichs */
+				float *x1, float *y1,	/* Pointer auf Startpunkt der Linie */
+				float *x2, float *y2);	/* Pointer auf Endpunkt der Linie */
 
-	extern short DtClipFilledBox(double xmin, double ymin,	/* Linke untere Ecke des Clip-Bereichs */
-				     double xmax, double ymax,	/* Rechte obere Ecke des Clip-Bereichs */
-				     double *x1, double *y1,	/* Pointer auf Startpunkt der Box */
-				     double *x2, double *y2);	/* Pointer auf Endpunkt der Box */
+	extern short DtClipFilledBox(float xmin, float ymin,	/* Linke untere Ecke des Clip-Bereichs */
+				     float xmax, float ymax,	/* Rechte obere Ecke des Clip-Bereichs */
+				     float *x1, float *y1,	/* Pointer auf Startpunkt der Box */
+				     float *x2, float *y2);	/* Pointer auf Endpunkt der Box */
 
 #ifdef __cplusplus
 }

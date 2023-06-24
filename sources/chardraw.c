@@ -113,15 +113,15 @@ static void code_to_ucoord(char c, HPGL_Pt * pp)
  ** into HP-GL coordinates (pointed to by pp)
  **/
 {
-	double x, y;
+	float x, y;
 
 	/*
 	 * RS6000 bug fix:
-	 *    outer braces of casts removed, costing 2 double ops
+	 *    outer braces of casts removed, costing 2 float ops
 	 * My guess: "char" is unsigned on RS6000
 	 */
-	x = (double) (c >> 4) - 1.0;	/* Bits 4,5,6 --> value 0..7 */
-	y = (double) (c & 0x0f) - 4.0;	/* Bits 0-3   --> value 0..f */
+	x = (float) (c >> 4) - 1.0;	/* Bits 4,5,6 --> value 0..7 */
+	y = (float) (c & 0x0f) - 4.0;	/* Bits 0-3   --> value 0..f */
 
 	pp->x = tp->Txx * x + tp->Txy * y + tp->refpoint.x + tp->offset.x;
 	pp->y = tp->Tyx * x + tp->Tyy * y + tp->refpoint.y + tp->offset.y;
@@ -828,7 +828,7 @@ void adjust_text_par(void)
  ** as given in structure declaration
  **/
 {
-	double cdir, sdir;
+	float cdir, sdir;
 
 /**
  ** Here, we use space & line as basic data, since these parameters
@@ -1021,7 +1021,7 @@ void plot_string(char *txt, LB_Mode mode, short current_pen)
  **/
 {
 	char *txt0;
-	double savedwidth = 0.;
+	float savedwidth = 0.;
 
 	txt0 = txt;
 	tp->refpoint = HP_pos;
@@ -1228,10 +1228,10 @@ void plot_user_char(FILE * hd, short current_pen)
  **/
 {
 	HPGL_Pt p;
-	double x, y;
+	float x, y;
 	float fx, fy;
 	int pendown = FALSE;
-	double savedwidth = 0.;
+	float savedwidth = 0.;
 
 	LineType SafeLineType = CurrentLineType;	/* Save Current Line Type */
 	CurrentLineType = LT_solid;

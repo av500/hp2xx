@@ -25,8 +25,8 @@
 #define ClipSurelyOutside(code1,code2) (code1 & code2)
 #define ClipFullyInside(code1,code2) (! (code1 | code2 ))
 
-static short ClipAreaCode(double x1, double y1,
-			  double x2, double y2, double px, double py)
+static short ClipAreaCode(float x1, float y1,
+			  float x2, float y2, float px, float py)
 {
 	short code = CLIP_INSIDE;
 
@@ -43,10 +43,10 @@ static short ClipAreaCode(double x1, double y1,
 	return code;
 }
 
-static int ClipWithBorder(double delta,
-			  double diff, double *tEnter, double *tLeave)
+static int ClipWithBorder(float delta,
+			  float diff, float *tEnter, float *tLeave)
 {
-	double t;
+	float t;
 	t = diff / delta;
 
 	if (fabs(t) < 1.e-5)
@@ -66,12 +66,12 @@ static int ClipWithBorder(double delta,
 }
 
 
-short DtClipLine(double xmin, double ymin,
-		 double xmax, double ymax,
-		 double *x1, double *y1, double *x2, double *y2)
+short DtClipLine(float xmin, float ymin,
+		 float xmax, float ymax,
+		 float *x1, float *y1, float *x2, float *y2)
 {
 	short area_code1, area_code2;
-	double eps;
+	float eps;
 
 	eps = 1.e-10;
 	area_code1 = ClipAreaCode(xmin, ymin, xmax, ymax, *x1, *y1);
@@ -84,11 +84,11 @@ short DtClipLine(double xmin, double ymin,
 /*	fprintf(stderr,"clipped line from %f %f to %f %f\n",*x1,*y1,*x2,*y2);*/
 		return CLIP_NODRAW;
 	} else {
-		double dx, dy;
+		float dx, dy;
 		int dx0, dy0;
-		double tEnter, tLeave;
-		double *tE = &tEnter;
-		double *tL = &tLeave;
+		float tEnter, tLeave;
+		float *tE = &tEnter;
+		float *tL = &tLeave;
 
 		dx = *x2 - *x1;
 		dy = *y2 - *y1;

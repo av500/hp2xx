@@ -104,7 +104,7 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 
 	int dd;			/* distance along line */
 	int tk;			/* thickness threshold */
-	double ang;		/* angle for initial point calculation */
+	float ang;		/* angle for initial point calculation */
 	/* Initialisation */
 	murphy.u = p1.x - p0.x;	/* delta x */
 	murphy.v = p1.y - p0.y;	/* delta y */
@@ -142,7 +142,7 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 	d1 = 0;
 	dd = 0;
 
-	ang = atan((double) murphy.v / (double) murphy.u);	/* calc new initial point - offset both sides of ideal */
+	ang = atan((float) murphy.v / (float) murphy.u);	/* calc new initial point - offset both sides of ideal */
 
 	if (murphy.oct2 == 0) {
 		pt.x = p0.x + my_lrint(offset * sin(ang));
@@ -214,7 +214,7 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 					}
 				}
 				d1 += murphy.kv;
-			} else {	/* double square move, extra parallel line */
+			} else {	/* float square move, extra parallel line */
 				if (murphy.oct2 == 0) {
 					pt.x--;
 				} else {

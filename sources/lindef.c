@@ -29,7 +29,7 @@ copies.
 #include "hpgl.h"
 
 
-double CurrentLinePatLen;
+float CurrentLinePatLen;
 /*LineType   CurrentLineType;*/
 signed int CurrentLinePattern;
 
@@ -45,7 +45,7 @@ LineEnds CurrentLineEnd;
 void set_line_style(SCHAR index, ...)
 {
 	SCHAR count;
-	double factor, percentage;
+	float factor, percentage;
 	va_list ap;
 
 	SCHAR val;
@@ -59,7 +59,7 @@ void set_line_style(SCHAR index, ...)
 		if (val < 0) {
 			break;
 		} else {
-			lt[index - LT_MIN][count] = (double) val;
+			lt[index - LT_MIN][count] = (float) val;
 			percentage += val;
 		}
 	}
@@ -84,7 +84,7 @@ void set_line_style(SCHAR index, ...)
 void set_line_style_by_UL(FILE * hd)
 {
 	SCHAR index, pos_index, neg_index, count, i;
-	double factor, percentage;
+	float factor, percentage;
 	float tmp;
 
 	if (read_float(&tmp, hd)) {
@@ -98,7 +98,7 @@ void set_line_style_by_UL(FILE * hd)
 	neg_index = (index * -1) - LT_MIN;
 
 	for (count = 0, percentage = 0; (read_float(&tmp, hd) == 0); count++) {	/* while there is an argument */
-		lt[pos_index][count] = (double) tmp;
+		lt[pos_index][count] = (float) tmp;
 		percentage += (int) tmp;
 	}
 

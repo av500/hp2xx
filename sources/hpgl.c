@@ -164,7 +164,7 @@ extern TextPar tp;
  ** "Local" globals (I know this is messy...) :
  **/
 static float xmin, xmax, ymin, ymax, neg_ticklen, pos_ticklen;
-static double Diag_P1_P2, pat_pos;
+static float Diag_P1_P2, pat_pos;
 static HPGL_Pt p_last = { M_PI, M_PI };	/* Init. to "impossible" values */
 
 static HPGL_Pt polygons[MAXPOLY];
@@ -184,8 +184,8 @@ static float rot_cos, rot_sin;
 static short rotate_flag = FALSE;	/* Flags tec external to HP-GL  */
 static short ps_flag = FALSE;
 static short ac_flag = FALSE;
-static double rot_ang = 0.;
-static double rot_tmp = 0.;	/* saved RO value for resetting after drawing */
+static float rot_ang = 0.;
+static float rot_tmp = 0.;	/* saved RO value for resetting after drawing */
 static short mv_flag = FALSE;
 static short pg_flag = FALSE;
 static short ct_dist = FALSE;
@@ -511,7 +511,7 @@ void HPGL_Pt_to_polygon(HPGL_Pt pf)
 
 	polygons[++vertices] = pf;
 	if (rotate_flag) {
-		double tmp = rot_cos * pf.x - rot_sin * pf.y;
+		float tmp = rot_cos * pf.x - rot_sin * pf.y;
 		pf.y = rot_sin * pf.x + rot_cos * pf.y;
 		pf.x = tmp;
 	}
@@ -540,8 +540,8 @@ void HPGL_Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
 
 static void
 LPattern_Generator(HPGL_Pt * pa,
-		   double dx, double dy,
-		   double start_of_pat, double end_of_pat)
+		   float dx, float dy,
+		   float start_of_pat, float end_of_pat)
 /**
  **	Generator of Line type patterns:
  **
@@ -559,14 +559,14 @@ LPattern_Generator(HPGL_Pt * pa,
  **	These lengths always add up to 1. A negative value terminates a pattern.
  **/
 {
-	double length_of_ele, start_of_action, end_of_action;
-	static double *p_cur_pat;
+	float length_of_ele, start_of_action, end_of_action;
+	static float *p_cur_pat;
 
 	p_cur_pat = lt[(LT_MIN * -1) + (int) CurrentLinePattern];	/* was CurrentLineType */
 
 	if (CurrentLineType == LT_adaptive)
 		for (;;) {
-			length_of_ele = (double) *p_cur_pat++ / 100;	/* Line or point        */
+			length_of_ele = (float) *p_cur_pat++ / 100;	/* Line or point        */
 			if (length_of_ele < 0.)
 				return;
 			PlotCmd cmd;
@@ -579,7 +579,7 @@ LPattern_Generator(HPGL_Pt * pa,
 			pa->y += dy * length_of_ele;
 			HPGL_Pt_to_tmpfile(cmd, pa);
 
-			length_of_ele = (double) *p_cur_pat++ / 100;	/* Gap        */
+			length_of_ele = (float) *p_cur_pat++ / 100;	/* Gap        */
 			if (length_of_ele < 0.)
 				return;
 			pa->x += dx * length_of_ele;
@@ -591,7 +591,7 @@ LPattern_Generator(HPGL_Pt * pa,
 	     ** Line or point:
 	     **/
 			start_of_action = end_of_action;
-			length_of_ele = (double) *p_cur_pat++ / 100;
+			length_of_ele = (float) *p_cur_pat++ / 100;
 			if (length_of_ele < 0.)
 				return;
 
@@ -667,7 +667,7 @@ LPattern_Generator(HPGL_Pt * pa,
 	     ** Gap (analogous to line/point):
 	     **/
 			start_of_action = end_of_action;
-			length_of_ele = (double) *p_cur_pat++ / 100;
+			length_of_ele = (float) *p_cur_pat++ / 100;
 			if (length_of_ele < 0)
 				return;
 			end_of_action += length_of_ele;
@@ -990,12 +990,12 @@ void read_PE(GEN_PAR * pg, void * hd)
 }
 
 
-double ceil_with_tolerance(double x, double tol)
+float ceil_with_tolerance(float x, float tol)
 {
-	double rounded;
+	float rounded;
 
 /*    rounded=rint(x);*/
-	rounded = (double) (x + 0.5);
+	rounded = (float) (x + 0.5);
 
 	if (fabs(rounded - x) <= tol)
 		return (rounded);
@@ -1005,7 +1005,7 @@ double ceil_with_tolerance(double x, double tol)
 
 static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 {
-	double seg_len, dx, dy, quot;
+	float seg_len, dx, dy, quot;
 	int n_pat, i;
 
 	dx = pb->x - pa->x;
@@ -1094,7 +1094,7 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 {
 	static HPGL_Pt P_last;
 	HPGL_Pt P;
-	double tmp;
+	float tmp;
 
 	if (record_off)		/* Wrong page!  */
 		return;
@@ -1565,7 +1565,7 @@ static void lines(int relative, void * hd)
 	HPGL_Pt p;
 	int numcmds = 0;
 	int outside = 0;
-	double p1x, p1y, p2x, p2y;
+	float p1x, p1y, p2x, p2y;
 
 	for (;;) {
 		if (read_float(&p.x, hd)) {	/* No number found      */
@@ -1616,7 +1616,7 @@ void line(int relative, HPGL_Pt p)
 {
 	HPGL_Pt pl, porig;
 	int outside = 0;
-	double x1, y1, x2, y2;
+	float x1, y1, x2, y2;
 
 	if (relative) {
 		p.x += p_last.x;
@@ -1692,7 +1692,7 @@ void line(int relative, HPGL_Pt p)
  **/
 
 
-static void arc_increment(HPGL_Pt * pcenter, double r, double phi)
+static void arc_increment(HPGL_Pt * pcenter, float r, float phi)
 {
 	HPGL_Pt p;
 	int outside = 0;
@@ -1741,7 +1741,7 @@ static void bezier(int relative, void * hd)
 	HPGL_Pt p, p1, p2, p3, polyp;
 	int i, outside;
 	float t;
-/*  double SafeLinePatLen = CurrentLinePatLen;*/
+/*  float SafeLinePatLen = CurrentLinePatLen;*/
 
 	for (;;) {		/* parameter set may contain several bezier curves */
 		if (read_float(&p1.x, hd))	/* No number found      */
@@ -1833,8 +1833,8 @@ static void tarcs(int relative, void * hd)
 {
 	HPGL_Pt p, p2, p3, center, d;
 	float alpha, eps;
-	double phi, phi0, r;
-	double SafeLinePatLen = CurrentLinePatLen;
+	float phi, phi0, r;
+	float SafeLinePatLen = CurrentLinePatLen;
 
 	if (read_float(&p2.x, hd))	/* No number found      */
 		return;
@@ -1953,8 +1953,8 @@ static void arcs(int relative, void * hd)
 {
 	HPGL_Pt p, d, center;
 	float alpha, eps;
-	double phi, phi0, r;
-	double SafeLinePatLen = CurrentLinePatLen;
+	float phi, phi0, r;
+	float SafeLinePatLen = CurrentLinePatLen;
 
 	if (read_float(&p.x, hd))	/* No number found      */
 		return;
@@ -2033,8 +2033,8 @@ static void fwedges(void * hd, float cur_pensize)
 {				/*derived from circles */
 	HPGL_Pt p, oldp, center;
 	float eps, r, start, sweep;
-	double phi;
-	double SafeLinePatLen = CurrentLinePatLen;
+	float phi;
+	float SafeLinePatLen = CurrentLinePatLen;
 	int outside = 0;
 
 	if (read_float(&r, hd))	/* No radius found      */
@@ -2135,8 +2135,8 @@ static void circles(void * hd)
 {
 	HPGL_Pt p, center, polyp;
 	float eps, r;
-	double phi;
-	double SafeLinePatLen = CurrentLinePatLen;
+	float phi;
+	float SafeLinePatLen = CurrentLinePatLen;
 	int outside = 0;
 
 	if (read_float(&r, hd))	/* No radius found      */
@@ -2262,8 +2262,8 @@ static void wedges(void * hd)
 {				/*derived from circles */
 	HPGL_Pt p, center;
 	float eps, r, start, sweep;
-	double phi;
-	double SafeLinePatLen = CurrentLinePatLen;
+	float phi;
+	float SafeLinePatLen = CurrentLinePatLen;
 	int outside = 0;
 
 	if (read_float(&r, hd))	/* No radius found      */
@@ -2735,7 +2735,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			if (p_last.x != polystart.x
 			    || p_last.y != polystart.y) {
 				int outside = 0;
-				double x1, y1, x2, y2;
+				float x1, y1, x2, y2;
 				if (iwflag) {
 					x1 = P1.x + (p_last.x -
 						     S1.x) * Q.x;
@@ -3792,12 +3792,12 @@ adjust_input_transform(const GEN_PAR * pg, const IN_PAR * pi, OUT_PAR * po)
  ** # points (dots) in any direction = range [mm] * 1in/25.4mm * #dots/in
  **/
 
-	double dot_ratio, Dx, Dy, tmp_w, tmp_h;
+	float dot_ratio, Dx, Dy, tmp_w, tmp_h;
 	char *dir_str;
 
 	Dx = xmax - xmin;
 	Dy = ymax - ymin;
-	dot_ratio = (double) po->dpi_y / (double) po->dpi_x;
+	dot_ratio = (float) po->dpi_y / (float) po->dpi_x;
 	po->width = pi->width;
 	po->height = pi->height;
 	po->xoff = pi->xoff;

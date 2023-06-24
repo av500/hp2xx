@@ -252,11 +252,11 @@ typedef struct {		/* Corresponding option(s)        */
 	int truesize;		/* -t                           */
 	int hwcolor;		/* -c                           */
 	int hwsize;		/* -p                           */
-	double width, height;	/* -w width -h height           */
-	double aspectfactor;	/* -a aspectfactor              */
-	double rotation;	/* -r rotation                  */
-	double x0, x1, y0, y1;	/* -x x0 -X x1 -y y0 -Y y1      */
-	double xoff, yoff;	/* -o xoff  -O yoff             */
+	float width, height;	/* -w width -h height           */
+	float aspectfactor;	/* -a aspectfactor              */
+	float rotation;	/* -r rotation                  */
+	float x0, x1, y0, y1;	/* -x x0 -X x1 -y y0 -Y y1      */
+	float xoff, yoff;	/* -o xoff  -O yoff             */
 	HPGL_Pt hwlimit;	/* -W p2.x -H p2.y		*/
 	char *in_file;		/* Input file name ("-" = stdin) */
 	FILE *hd;		/* (internally needed)          */
@@ -278,13 +278,13 @@ typedef struct {		/* Corresponding option(s)        */
 	int specials;		/* -s specials  (PCL only)      */
 	int pagecount;		/* for naming multi-page output */
 	char *outfile;		/* -f outfile ("-" = stdout)    */
-	double xmin, ymin, xmax, ymax;	/* (internally needed)          */
-	double xoff, yoff;	/* Internal copies from IN_PAR  */
-	double width, height;	/* Internal copies from IN_PAR  */
-	double HP_to_xdots;	/* (internally needed)          */
-	double HP_to_ydots;	/* (internally needed)          */
+	float xmin, ymin, xmax, ymax;	/* (internally needed)          */
+	float xoff, yoff;	/* Internal copies from IN_PAR  */
+	float width, height;	/* Internal copies from IN_PAR  */
+	float HP_to_xdots;	/* (internally needed)          */
+	float HP_to_ydots;	/* (internally needed)          */
 	PicBuf *picbuf;		/* (internally needed)          */
-	double zengage, zretract;	/* z min/max for 3d (currently only nc) */
+	float zengage, zretract;	/* z min/max for 3d (currently only nc) */
 } OUT_PAR;
 
 
@@ -369,7 +369,7 @@ PlotCmd PlotCmd_from_tmpfile(FILE *td);
 void HPGL_Pt_from_tmpfile(HPGL_Pt *, FILE *td);
 void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
 /*int read_float(float *, FILE *);*/
-double ceil_with_tolerance(double, double);
+float ceil_with_tolerance(float, float);
 void line(int relative, HPGL_Pt p);
 int read_PE_flags(GEN_PAR *, int, void *, PE_flags *);
 int read_PE_coord(int, void *, PE_flags *, float *);

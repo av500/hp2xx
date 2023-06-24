@@ -27,7 +27,7 @@ copies.
 
 typedef enum { LT_solid, LT_adaptive, LT_plot_at, LT_fixed } LineType;   
 
-extern double     CurrentLinePatLen;
+extern float     CurrentLinePatLen;
 extern LineType   CurrentLineType;
 extern signed int CurrentLinePattern;
 
@@ -42,7 +42,7 @@ extern signed int CurrentLinePattern;
 
 typedef signed char SCHAR;    
 
-typedef double LINESTYLE[LT_PATTERNS][LT_ELEMENTS+1];
+typedef float LINESTYLE[LT_PATTERNS][LT_ELEMENTS+1];
 
 extern  LINESTYLE lt;
 
