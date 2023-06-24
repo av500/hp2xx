@@ -555,7 +555,7 @@ void HPGL_Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
 	if (record_off)		/* Wrong page!  */
 		return;
 
-DBG printf("CMD %d  Pt  %8.3f %8.3f\n", cmd, pf->x, pf->y);
+DBG printf("CMD %d  Pt  %13.3f %13.3f\n", cmd, pf->x, pf->y);
 
 	if (write_c((int) cmd, td) == EOF) {
 		PError("HPGL_Pt_to_tmpfile");
@@ -585,7 +585,7 @@ void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
 	if (kind == LineAttrEnd)	/* save this so we may save/restore the current state before character draw */
 		CurrentLineEnd = value;
 
-DBG printf("DEF_LA\n");
+DBG printf("DEF_LA  %d  %d\n", kind, value);
 	if (write_c((int) DEF_LA, td) == EOF) {
 		PError("Line_Attr_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
@@ -628,7 +628,7 @@ void Pen_Width_to_tmpfile(int pen, PEN_W width)
 		pt.width[tp] = tw;	/* set just the specified one */
 	}
 
-DBG printf("DEF_PW\n");
+DBG printf("DEF_PW %d  %f\n", pen, width);
 	if (write_c((int) DEF_PW, td) == EOF) {
 		PError("Pen_Width_to_tmpfile");
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
