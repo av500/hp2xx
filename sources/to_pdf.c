@@ -285,7 +285,7 @@ int to_pdf(const GEN_PAR * pg, const OUT_PAR * po)
  ** Command loop: While temporary file not empty: process command.
  **/
 	openpath = 0;
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF) {
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF) {
 		switch (cmd) {
 		case NOP:
 			break;
@@ -344,7 +344,7 @@ int to_pdf(const GEN_PAR * pg, const OUT_PAR * po)
 					 (double) pensize, md);
 			pdf_set_color(pt.color[pen_no], md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			PDF_moveto(md, (pt1.x - xmin) * xcoord2mm,
 				   (pt1.y - ymin) * ycoord2mm);
 			openpath = 1;
@@ -361,7 +361,7 @@ int to_pdf(const GEN_PAR * pg, const OUT_PAR * po)
 
 			pdf_set_color(pt.color[pen_no], md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			PDF_lineto(md, (pt1.x - xmin) * xcoord2mm,
 				   (pt1.y - ymin) * ycoord2mm);
 			openpath = 1;
@@ -372,7 +372,7 @@ int to_pdf(const GEN_PAR * pg, const OUT_PAR * po)
 
 			pdf_set_color(pt.color[pen_no], md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			PAGEMODE;
 			PDF_save(md);
 			PDF_setlinewidth(md, 0.00001);

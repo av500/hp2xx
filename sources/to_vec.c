@@ -388,7 +388,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 		ycoord2mm *= 2.834646;
 	}
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF)
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF)
 		switch (cmd) {
 		case NOP:
 			break;
@@ -465,7 +465,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 				}
 			break;
 		case MOVE_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize == 0 || mode == 3 || mode == 4
 			    || mode == 7)
 				break;
@@ -501,7 +501,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 						    (pt1.y -
 						     po->ymin) * ycoord2mm,
 						    np++);
-				HPGL_Pt_from_tmpfile(&pt1);
+				HPGL_Pt_from_tmpfile(&pt1, pg->td);
 				chars_out += fprintf(md, poly_next,
 						     (pt1.x -
 						      po->xmin) *
@@ -544,7 +544,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 						    (pt1.y -
 						     po->ymin) * ycoord2mm,
 						    np++);
-				HPGL_Pt_from_tmpfile(&pt1);
+				HPGL_Pt_from_tmpfile(&pt1, pg->td);
 				chars_out += fprintf(md, poly_next,
 						     (pt1.x -
 						      po->xmin) *
@@ -562,7 +562,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 					    (pt1.y -
 					     po->ymin) * ycoord2mm);
 				np++;
-				HPGL_Pt_from_tmpfile(&pt1);
+				HPGL_Pt_from_tmpfile(&pt1, pg->td);
 				chars_out += fprintf(md, poly_next,
 						     (pt1.x -
 						      po->xmin) *
@@ -573,7 +573,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 				toolz = 1;	/* Down */
 				break;
 			} else if (mode == 9 && toolz == 1) {	/* Tool already down skip the lower  */
-				HPGL_Pt_from_tmpfile(&pt1);
+				HPGL_Pt_from_tmpfile(&pt1, pg->td);
 				chars_out = fprintf(md, poly_next,
 						    (pt1.x -
 						     po->xmin) * xcoord2mm,
@@ -592,7 +592,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 						    (old_pt.y -
 						     po->ymin) * ycoord2mm,
 						    np++);
-				HPGL_Pt_from_tmpfile(&pt1);
+				HPGL_Pt_from_tmpfile(&pt1, pg->td);
 				chars_out += fprintf(md, poly_next,
 						     (pt1.x -
 						      old_pt.x) *
@@ -605,7 +605,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 			}
 #endif
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (mode == 8)
 				pt1.y = po->ymax - pt1.y;
 
@@ -636,7 +636,7 @@ int to_mftex(const GEN_PAR * pg, const OUT_PAR * po, int mode)
 			break;
 
 		case PLOT_AT:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (chars_out) {	/* Finish up old polygon */
 				fprintf(md, poly_end);
 				chars_out = 0;

@@ -104,7 +104,7 @@ int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 
 	figmode = FIG_NONE;
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF)
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF)
 		switch (cmd) {
 		case NOP:
 			break;
@@ -200,7 +200,7 @@ int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 
 		case MOVE_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (figmode == FIG_PLOT) {	/* Finish up old polyline */
 				fig_poly_end(pensize, colour, jointype,
 					     captype, md, npoints, x, y);
@@ -222,7 +222,7 @@ int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 				npoints = 1;
 			}
 			/* Write out this point */
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			x[npoints] =
 			    (int) ((pt1.x - po->xmin) * xcoord2mm);
 			y[npoints] =
@@ -237,7 +237,7 @@ int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 
 		case PLOT_AT:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (figmode == FIG_PLOT) {	/* Finish up old polyline */
 				fig_poly_end(pensize, colour, jointype,
 					     captype, md, npoints, x, y);

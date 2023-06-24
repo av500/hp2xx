@@ -4053,17 +4053,7 @@ adjust_input_transform(const GEN_PAR * pg, const IN_PAR * pi, OUT_PAR * po)
 	po->ymax = ymax;
 }
 
-#ifdef EMF
-void reset_tmpfile(void)
-{
-	(void) lseek(fileno(td), 0L, SEEK_SET);
-	if (vec_cntr_r)
-		again = TRUE;
-	vec_cntr_r = 0;
-}
-#endif
-
-PlotCmd PlotCmd_from_tmpfile(void)
+PlotCmd PlotCmd_from_tmpfile(FILE *td)
 {
 	PlotCmd cmd;
 
@@ -4144,9 +4134,7 @@ PlotCmd PlotCmd_from_tmpfile(void)
 	}
 }
 
-
-
-void HPGL_Pt_from_tmpfile(HPGL_Pt * pf)
+void HPGL_Pt_from_tmpfile(HPGL_Pt * pf, FILE *td)
 {
 	if (fread((VOID *) pf, sizeof(*pf), 1, td) != 1) {
 		PError("HPGL_Pt_from_tmpfile");

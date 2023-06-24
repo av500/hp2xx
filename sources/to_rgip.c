@@ -250,7 +250,7 @@ int to_rgip(const GEN_PAR * pg, const OUT_PAR * po)
  ** Command loop: While temporary file not empty process command.
  **/
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF) {
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF) {
 		switch (cmd) {
 		case NOP:
 			break;
@@ -307,7 +307,7 @@ int to_rgip(const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 
 		case MOVE_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (firstmove == 1) {
 				firstmove = 0;
 			} else {
@@ -319,7 +319,7 @@ int to_rgip(const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 
 		case DRAW_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize != 0) {
 				endx = rgipx(((&pt1)->x) - po->xmin);
 				endy = rgipy(((&pt1)->y) - po->ymin);
@@ -333,7 +333,7 @@ int to_rgip(const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 
 		case PLOT_AT:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize != 0) {
 				startx = rgipx(((&pt1)->x) - po->xmin);
 				starty = rgipy(((&pt1)->y) - po->ymin);

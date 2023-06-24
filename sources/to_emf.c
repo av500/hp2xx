@@ -61,7 +61,10 @@ copies.
 #include "pendef.h"
 #include "lindef.h"
 
-extern void reset_tmpfile(void);	// in hpgl.c
+void reset_tmpfile(FILE *td)
+{
+	(void) lseek(fileno(td), 0L, SEEK_SET);
+}
 
 
 typedef struct {		// for use by preview Dialog
@@ -158,7 +161,7 @@ static int plotit(HANDLE outDC, const GEN_PAR * pg, const OUT_PAR * po)
 	** Command loop: While temporary file not empty: process command.
 	**/
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF) {
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF) {
 		switch (cmd) {
 		case NOP:
 			break;
@@ -207,17 +210,17 @@ static int plotit(HANDLE outDC, const GEN_PAR * pg, const OUT_PAR * po)
 			break;
 		case MOVE_TO:	// Moveto
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize != 0)
 				emf_move_to(&pt1, outDC);
 			break;
 		case DRAW_TO:	// Draw line
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize != 0)
 				emf_line_to(&pt1, 'D', outDC);
 			break;
 		case PLOT_AT:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize != 0) {
 				emf_line_to(&pt1, 'M', outDC);
 				emf_line_to(&pt1, 'D', outDC);
@@ -301,7 +304,7 @@ Preview(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_SYSCOMMAND:
 		if (LOWORD(wParam) == PRINT) {
-			reset_tmpfile();	//rewind so i can reuse the data  (in hpgl.c)
+			reset_tmpfile(pg->td);	//rewind so i can reuse the data  (in hpgl.c)
 			to_emp(pg, po);
 			return TRUE;
 		}

@@ -365,8 +365,8 @@ void NormalWait(void);
 void plot_user_char(FILE *, short);
 void read_HPGL(GEN_PAR *, const IN_PAR *);
 void adjust_input_transform(const GEN_PAR *, const IN_PAR *, OUT_PAR *);
-PlotCmd PlotCmd_from_tmpfile(void);
-void HPGL_Pt_from_tmpfile(HPGL_Pt *);
+PlotCmd PlotCmd_from_tmpfile(FILE *td);
+void HPGL_Pt_from_tmpfile(HPGL_Pt *, FILE *td);
 void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
 /*int read_float(float *, FILE *);*/
 double ceil_with_tolerance(double, double);

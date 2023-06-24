@@ -465,7 +465,7 @@ int to_eps(const GEN_PAR * pg, const OUT_PAR * po)
  ** Command loop: While temporary file not empty: process command.
  **/
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF) {
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF) {
 		switch (cmd) {
 		case NOP:
 			break;
@@ -516,7 +516,7 @@ int to_eps(const GEN_PAR * pg, const OUT_PAR * po)
 					&pt1, md);
 			ps_set_color(pt.color[pen_no], &pt1, md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize > 0.05)
 				ps_stroke_and_move_to(&pt1, md);
 			break;
@@ -529,7 +529,7 @@ int to_eps(const GEN_PAR * pg, const OUT_PAR * po)
 					&pt1, md);
 			ps_set_color(pt.color[pen_no], &pt1, md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize > 0.05)
 				ps_line_to(&pt1, 'D', md);
 			break;
@@ -542,7 +542,7 @@ int to_eps(const GEN_PAR * pg, const OUT_PAR * po)
 					&pt1, md);
 			ps_set_color(pt.color[pen_no], &pt1, md);
 
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			if (pensize > 0.05) {
 				ps_line_to(&pt1, 'M', md);
 				ps_line_to(&pt1, 'D', md);	/* not sure whether this is needed */

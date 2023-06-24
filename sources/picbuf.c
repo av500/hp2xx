@@ -818,7 +818,7 @@ void tmpfile_to_PicBuf(const GEN_PAR * pg, const OUT_PAR * po)
 
 	rewind(pg->td);
 
-	while ((cmd = PlotCmd_from_tmpfile()) != CMD_EOF)
+	while ((cmd = PlotCmd_from_tmpfile(pg->td)) != CMD_EOF)
 		switch (cmd) {
 		case NOP:
 			break;
@@ -856,12 +856,12 @@ void tmpfile_to_PicBuf(const GEN_PAR * pg, const OUT_PAR * po)
 			consecutive = 0;
 			break;
 		case MOVE_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			HPcoord_to_dotcoord(&pt1, &ref, po);
 			consecutive = 0;
 			break;
 		case DRAW_TO:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			HPcoord_to_dotcoord(&pt1, &next, po);
 			line_PicBuf(&ref, &next, pt.width[pen_no],
 				    pt.color[pen_no], consecutive, po);
@@ -869,7 +869,7 @@ void tmpfile_to_PicBuf(const GEN_PAR * pg, const OUT_PAR * po)
 			consecutive++;
 			break;
 		case PLOT_AT:
-			HPGL_Pt_from_tmpfile(&pt1);
+			HPGL_Pt_from_tmpfile(&pt1, pg->td);
 			HPcoord_to_dotcoord(&pt1, &ref, po);
 			line_PicBuf(&ref, &ref, pt.width[pen_no],
 				    pt.color[pen_no], consecutive, po);
