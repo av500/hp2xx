@@ -635,6 +635,182 @@ void cleanup(GEN_PAR * pg, IN_PAR * pi, OUT_PAR * po)
 	cleanup_o(po);
 }
 
+static void *td;
+
+#define DBG if(1)
+
+static int write_c(int c, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fputc(c, f);
+}
+
+static size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx)
+{
+	FILE *f = (FILE*)ctx; 
+	return fwrite((void*)ptr, size, nmemb, f);
+}
+
+void Pen_to_tmpfile(int pen)
+{
+	if (record_off)
+		return;
+
+DBG printf("PEN %d\n", pen);
+	if (write_c((int) SET_PEN, td) == EOF || write_c(pen, td) == EOF) {
+		PError("Pen_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
+void Speed_to_tmpfile(int speed)
+{
+	if (record_off)
+		return;
+
+DBG printf("VS  %d\n", speed);
+	if (write_c((int) SET_SPEED, td) == EOF || write_c(speed, td) == EOF) {
+		PError("Speed_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
+void Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
+{
+	if (record_off)		/* Wrong page!  */
+		return;
+
+DBG printf("CMD %d  Pt  %13.3f %13.3f\n", cmd, pf->x, pf->y);
+
+	if (write_c((int) cmd, td) == EOF) {
+		PError("HPGL_Pt_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes((VOID *) pf, sizeof(*pf), 1, td) != 1) {
+		PError("HPGL_Pt_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
+void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
+{
+	LineAttrKind tk = kind;
+	LineEnds tv = value;
+
+	if (record_off)		/* return if current plot is not the selected one */
+		return;		/* (of a multi-image file) */
+
+	if (kind == LineAttrEnd)	/* save this so we may save/restore the current state before character draw */
+		CurrentLineEnd = value;
+
+DBG printf("DEF_LA  %d  %d\n", kind, value);
+	if (write_c((int) DEF_LA, td) == EOF) {
+		PError("Line_Attr_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tk, sizeof(tk), 1, td) != 1) {
+		PError("Line_Attr_to_tmpfile - kind");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tv, sizeof(tv), 1, td) != 1) {
+		PError("Line_Attr_to_tmpfile - value");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	return;
+}
+
+void Pen_Width_to_tmpfile(int pen, PEN_W width)
+{
+	int i;
+	PEN_N tp;
+	PEN_W tw;
+
+	tp = (PEN_N) pen;
+	tw = width;
+
+	if (record_off)		/* Wrong page!  */
+		return;
+	if (pen < 0)
+		return;		/* Might happen when "current pen" is still
+				   undefined */
+	if (tp == 0) {		/* set all pens */
+		for (i = 1; i < NUMPENS; ++i)
+			pt.width[i] = tw;
+	} else {
+		pt.width[tp] = tw;	/* set just the specified one */
+	}
+
+DBG printf("DEF_PW %d  %f\n", pen, width);
+	if (write_c((int) DEF_PW, td) == EOF) {
+		PError("Pen_Width_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tp, sizeof(tp), 1, td) != 1) {
+		PError("Pen_Width_to_tmpfile - pen");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&tw, sizeof(tw), 1, td) != 1) {
+		PError("Pen_Width_to_tmpfile - width");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
+
+void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
+{
+	PEN_N tp;
+	PEN_C r, g, b;
+
+	tp = (PEN_N) pen;
+	r = (PEN_C) red;
+	g = (PEN_C) green;
+	b = (PEN_C) blue;
+
+	if (record_off)		/* Wrong page!  */
+		return;
+
+DBG printf("DEF_PC\n");
+	if (write_c((int) DEF_PC, td) == EOF) {
+		PError("Pen_Color_to_tmpfile");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+
+	if (write_bytes(&tp, sizeof(tp), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - pen");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&r, sizeof(r), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - red component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&g, sizeof(g), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - green component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+	if (write_bytes(&b, sizeof(b), 1, td) != 1) {
+		PError("Pen_Color_to_tmpfile - blue component");
+		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
+		exit(ERROR);
+	}
+}
 
 
 
@@ -691,6 +867,8 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
 		PError("hp2xx -- opening temporary file");
 		return ERROR;
 	}
+	
+	td = pg->td;
 
   /**
    ** Convert HPGL data into compact temporary binary file, and obtain

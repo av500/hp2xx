@@ -8,6 +8,7 @@ void read_string (char *target, void *);
 
 void Pen_to_tmpfile(int pen);
 void Speed_to_tmpfile(int speed);
+void Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
 void HPGL_Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
 
 void HPGL_Pt_to_polygon (const HPGL_Pt pf );
