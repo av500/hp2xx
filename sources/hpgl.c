@@ -2133,7 +2133,7 @@ static void fwedges(void * hd, float cur_pensize)
 
 static void circles(void * hd)
 {
-	HPGL_Pt p, center, polyp;
+	HPGL_Pt p, center, polyp = {};
 	float eps, r;
 	float phi;
 	float SafeLinePatLen = CurrentLinePatLen;
@@ -3010,8 +3010,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			P2.x = P2.x + 1.;
 		if (P1.y == P2.y)
 			P2.y = P2.y + 1.;
-		fprintf(stderr, "P1,P2 nach IR: %f %f, %f %f\n", P1.x,
-			P1.y, P2.x, P2.y);
+//printf(stderr, "P1,P2 nach IR: %f %f, %f %f\n", P1.x, P1.y, P2.x, P2.y);
 		Q.x = (P2.x - P1.x) / (S2.x - S1.x);
 		Q.y = (P2.y - P1.y) / (S2.y - S1.y);
 		Diag_P1_P2 = HYPOT(P2.x - P1.x, P2.y - P1.y);
@@ -3087,14 +3086,14 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 
 	case OP:		/* Output reference Points P1,P2 */
 		if (!silent_mode) {
-			Eprintf("\nP1 = (%g, %g)\n", P1.x, P1.y);
-			Eprintf("P2 = (%g, %g)\n", P2.x, P2.y);
+			//Eprintf("\nP1 = (%g, %g)\n", P1.x, P1.y);
+			//Eprintf("P2 = (%g, %g)\n", P2.x, P2.y);
 		}
 		break;
 	case OW:		/* Output clip box  */
 		if (!silent_mode) {
-			Eprintf("\nC1 = (%g, %g)\n", C1.x, C1.y);
-			Eprintf("C2 = (%g, %g)\n", C2.x, C2.y);
+			//Eprintf("\nC1 = (%g, %g)\n", C1.x, C1.y);
+			//Eprintf("C2 = (%g, %g)\n", C2.x, C2.y);
 		}
 		break;
 
@@ -3154,11 +3153,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			CurrentLinePattern = (int) p1.x;
 
 			if (!read_float(&p1.y, hd)) {	/* optional pattern length?     */
-				if (p1.y <= 0.0)
-					Eprintf
-					    ("Illegal pattern length:\t%g\n",
-					     p1.y);
-				else {
+				if (p1.y <= 0.0) {
+					//Eprintf("Illegal pattern length:\t%g\n", p1.y);
+				} else {
 					Diag_P1_P2 =
 					    HYPOT(P2.x - P1.x,
 						  P2.y - P1.y);
@@ -3285,10 +3282,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 				case 1:	/* picture name follows */
 					tmpstr[0] = read_c(hd);	/* skip comma */
 					tmpstr[0] = read_c(hd);
-					if (!silent_mode)
-						fprintf(stderr,
-							"HPGL picture name: %c",
-							tmpstr[0]);
+					if (!silent_mode) {
+						//fprintf(stderr, "HPGL picture name: %c", tmpstr[0]);
+					}
 					if (tmpstr[0] == '"') {
 						tmpstr[0] = ' ';
 						do {
@@ -3302,8 +3298,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 						}
 						while (tmpstr[0] != '"');
 					}
-					if (!silent_mode)
-						fprintf(stderr, "\n");
+					if (!silent_mode) {
+						//fprintf(stderr, "\n");
+					}
 					break;
 				case 2:	/* number of copies */
 				case 3:	/* disposition code */
@@ -3396,7 +3393,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 		break;
 	case CP:		/* Char Plot (rather: move)     */
 		if (read_float(&p1.x, hd)) {	/* No number found  */
-			plot_string("\n\r", LB_direct, pen);
+			plot_string((char*)"\n\r", LB_direct, pen);
 			return;
 		} else if (read_float(&p1.y, hd))
 			par_err_exit(2, cmd, hd);
@@ -3552,9 +3549,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			case 2:	/* fixed or variable spacing */
 				if (read_float(&csfont, hd))
 					par_err_exit(2, cmd, hd);
-				else if ((int) csfont == 1 && !silent_mode)
-					fprintf(stderr,
-						"only fixed fonts available\n");
+				else if ((int) csfont == 1 && !silent_mode) {
+					fprintf(stderr, "only fixed fonts available\n");
+				}
 				break;
 			case 3:	/* font pitch */
 			case 4:	/* font height */
@@ -3573,9 +3570,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			case 7:	/* typeface */
 				if (read_float(&csfont, hd))
 					par_err_exit(2, cmd, hd);
-				else if (!silent_mode)
-					fprintf(stderr,
-						"pitch/height/posture/typeface unsupported\n");
+				else if (!silent_mode) {
+					fprintf(stderr, "pitch/height/posture/typeface unsupported\n");
+				}
 				break;
 			default:
 				par_err_exit(1, cmd, hd);
