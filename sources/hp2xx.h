@@ -145,7 +145,7 @@ copies.
 
 #define MM_TO_PS_POINT 2.834646
 
-#define	MAX_LB_LEN	150	/* Max num of chars per label   */
+#define	MAX_LB_LEN	1024	/* Max num of chars per label   */
 
 #define MAXPOLY 20480		/* Size of polygon vertex buffer */
 
