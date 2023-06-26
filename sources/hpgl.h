@@ -3,6 +3,11 @@
 #include "bresnham.h"
 #include "hp2xx.h"
 
+#define	MAX_LB_LEN	1024	/* Max num of chars per label   */
+
+//#define MAXPOLY 2048		/* Size of polygon vertex buffer */
+#define MAXPOLY 128		/* Size of polygon vertex buffer */
+
 int read_float (float *pnum, void * hd);
 void read_string (char *target, void *);
 
