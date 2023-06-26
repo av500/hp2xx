@@ -159,28 +159,6 @@ void set_line_style_defaults()
 	set_line_style(8, 50, 10, 0, 10, 10, 10, 0, 10, -1);
 }
 
-void print_line_style(void)
-{
-	int i, j;
-
-	printf("\n");
-
-	for (j = 0; j < LT_PATTERNS; j++) {
-		if (lt[j][0] < 0)
-			continue;
-		else
-			printf("LT %3d ", LT_MIN + j);
-
-		for (i = 0; i <= LT_ELEMENTS; i++) {
-			if (lt[j][i] < 0)
-				break;
-			printf("%3.00f ", lt[j][i]);
-		}
-		printf("\n");
-	}
-}
-
-
 /************************************************* 
  *  Line Attributes
  *************************************************/
