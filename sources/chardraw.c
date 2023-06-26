@@ -151,7 +151,7 @@ static void ASCII_to_char(int c)
 
 		if (c & 0x80) {
 			/*Eprintf ("8bit character mapped to charset 7\n"); */
-			c += 128;
+			c -= 128;
 			ptr = &charset7[c][0];
 		} else {
 			ptr = &charset0[c][0];
@@ -753,7 +753,7 @@ static void ASCII_to_char(int c)
 		}
 		if (c & 0x80) {
 			/*Eprintf ("8bit character mapped to charset 7\n"); */
-			c += 128;
+			c -= 128;
 			ptr = &charset7[c][0];
 		} else {
 			ptr = &charset0[c][0];
@@ -1126,7 +1126,7 @@ static void ASCII_set_center(int c)
 
 		if (c & 0x80) {
 			Eprintf("8bit character mapped to charset 7\n");
-			c += 128;
+			c -= 128;
 			ptr = &charset7[c][0];
 		} else {
 			ptr = &charset0[c][0];
