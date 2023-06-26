@@ -243,7 +243,7 @@ OBJS	= clip.o fillpoly.o\
 PROGRAM	= hp2xx
 
 TESTOBJS= clip.o fillpoly.o\
-	  hpgl.o picbuf.o bresnham.o murphy.o chardraw.o \
+	  hpgl.o bresnham.o chardraw.o \
 	  test.o pendef.o lindef.o
 
 TEST	= test
