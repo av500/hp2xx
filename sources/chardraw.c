@@ -140,7 +140,7 @@ static void ASCII_to_char(int c)
 	const char *ptr;
 	int outside = 0;
 	static int warnfont = 0;
-	int SafeLineType = CurrentLineType;
+	LineType SafeLineType = CurrentLineType;
 	LineEnds SafeLineEnd = CurrentLineEnd;
 
 	CurrentLineType = LT_solid;
