@@ -82,7 +82,7 @@ copies.
  ** commands needed for switching from one to the other.
  **/
 
-const char *charset2[128] = {
+static const char *charset2[128] = {
 	/* 0x00 ... 0x1f        */
 
 /**

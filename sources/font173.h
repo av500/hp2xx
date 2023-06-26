@@ -78,7 +78,7 @@ copies.
  ** characters in the upper half of the font
  **/
 
-const char *charset173[256] = {
+static const char *charset173[256] = {
 	/* 0x00 ... 0x1f        */
 
 /**
