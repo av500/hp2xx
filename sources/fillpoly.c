@@ -37,7 +37,7 @@ void fill(HPGL_Pt polygon[], int numpoints, HPGL_Pt point1,
 
 	Pen_Width_to_tmpfile(1, penwidth);
 
-	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)LAE_round);
 
 	if (filltype > 2)
 		penwidth = spacing;
@@ -229,7 +229,7 @@ return;
 	if (filltype != 4) {
 		CurrentLineEnd = SafeLineEnd;
 		Pen_Width_to_tmpfile(1, SafePenW);
-		Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
+		Line_Attr_to_tmpfile(LineAttrEnd, (int)SafeLineEnd);
 		return;
 	}
 
@@ -250,7 +250,7 @@ return;
 	pymin = pymin - 1.;
 	pymax = pymax + 1.;
 
-	Line_Attr_to_tmpfile(LineAttrEnd, LAE_butt);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)LAE_butt);
 
 	numlines = (int) fabs(1. + (pxmax - pxmin + penwidth) / penwidth);
 
@@ -389,5 +389,5 @@ return;
 	}			/* next scanline */
 	CurrentLineEnd = SafeLineEnd;
 	Pen_Width_to_tmpfile(1, SafePenW);
-	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)SafeLineEnd);
 }

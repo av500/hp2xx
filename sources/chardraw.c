@@ -144,7 +144,7 @@ static void ASCII_to_char(int c)
 	LineEnds SafeLineEnd = CurrentLineEnd;
 
 	CurrentLineType = LT_solid;
-	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)LAE_round);
 
 	switch (tp->font) {
 	case 0:		/* charset 0, limited to 7 bit ASCII - 8bit addressing maps to charset 7        */
@@ -798,7 +798,7 @@ static void ASCII_to_char(int c)
 	CurrentLineType = SafeLineType;
 
 	/* Restore Line Ends */
-	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)SafeLineEnd);
 
 }
 
@@ -1328,7 +1328,7 @@ void ASCII_to_font(int c)
 	LineEnds SafeLineEnd = CurrentLineEnd;
 
 	CurrentLineType = LT_solid;
-	Line_Attr_to_tmpfile(LineAttrEnd, LAE_round);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)LAE_round);
 	if (c < 0)
 		c += 256;
 	if (tp->font == 0 || tp->font == 7)
@@ -1404,7 +1404,7 @@ void ASCII_to_font(int c)
 	tt_refpoint.y = 0;
 	/* Restore Line Ends */
 	CurrentLineType = SafeLineType;
-	Line_Attr_to_tmpfile(LineAttrEnd, SafeLineEnd);
+	Line_Attr_to_tmpfile(LineAttrEnd, (int)SafeLineEnd);
 }
 
 
