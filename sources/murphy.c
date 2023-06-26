@@ -250,10 +250,7 @@ void murphy_wideline(DevPt p0, DevPt p1, int width, int miter)
 
 }
 
-static void do_miter(miter, ml1b, ml2b, ml1, ml2)
-int miter;
-DevPt ml1b, ml2b, ml1, ml2;
-
+static void do_miter(int miter, DevPt ml1b, DevPt ml2b, DevPt ml1, DevPt ml2)
 {
 	int ftmp1, ftmp2;
 	DevPt m1, m2, *p_act;
