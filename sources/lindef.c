@@ -224,6 +224,7 @@ void set_line_attr(void * hd)
 	return;
 }
 
+#ifndef STM32
 int load_line_attr(FILE * td)
 {
 	LineAttrKind kind;
@@ -264,3 +265,4 @@ int load_line_attr(FILE * td)
 
 	return (0);
 }
+#endif

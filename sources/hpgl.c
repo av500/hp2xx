@@ -3775,7 +3775,7 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 	}
 }
 
-
+#ifndef STM32
 void
 adjust_input_transform(const GEN_PAR * pg, const IN_PAR * pi, OUT_PAR * po)
 {
@@ -3822,7 +3822,7 @@ adjust_input_transform(const GEN_PAR * pg, const IN_PAR * pi, OUT_PAR * po)
 		dir_str = "true sizes";
 		if (pi->center_mode) {
 			if (!pg->quiet) {
-				fprintf(stderr,
+				fprintf(stderr, 
 					"trying to center image\n");
 				fprintf(stderr,
 					"po->width ?<? tmp_w: %f %f\n",
@@ -3970,3 +3970,4 @@ void HPGL_Pt_from_tmpfile(HPGL_Pt * pf, FILE *td)
 		    ("HPGL_Pt_from_tmpfile: y out of range (%g not in [%g, %g])\n",
 		     pf->y, ymin, ymax);
 }
+#endif
