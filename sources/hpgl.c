@@ -206,8 +206,8 @@ static short wu_relative = FALSE;
 static int again = FALSE;
 static char StrTerm = ETX;	/* String terminator char       */
 static short StrTermSilent = 1;	/* only terminates, or prints too */
-static char *strbuf = NULL;
 static unsigned int strbufsize = MAX_LB_LEN + 1;
+static char strbuf[MAX_LB_LEN + 1];
 static char symbol_char = '\0';	/* Char in Symbol Mode (0=off)  */
 static unsigned char r_base = 0;
 static unsigned char g_base = 0;
@@ -360,13 +360,6 @@ static void reset_HPGL(void)
 	tp->sstrokewidth = tp->astrokewidth = tp->strokewidth = 0.11;
 	StrTerm = ETX;
 	StrTermSilent = 1;
-	if (strbuf == NULL) {
-		strbuf = malloc(strbufsize);
-		if (strbuf == NULL) {
-			fprintf(stderr, "\nNo memory !\n");
-			exit(ERROR);
-		}
-	}
 	strbuf[0] = '\0';
 
 	P1.x = P1X_default;
@@ -1192,14 +1185,9 @@ void read_string(char *buf, void *hd)
 
 	for (n = 0, c = read_c(hd); (c != EOF) && (c != StrTerm);
 	     c = read_c(hd)) {
-		if (n > strbufsize / 2) {
-			strbufsize *= 2;
-			strbuf = realloc(strbuf, strbufsize);
-			if (strbuf == NULL) {
-				fprintf(stderr, "\nNo memory !\n");
-				exit(ERROR);
-			}
-			buf = strbuf + n;
+		if (n > strbufsize) {
+			fprintf(stderr, "\nNo memory !\n");
+			exit(ERROR);
 		}
 		if (c == '\0')
 			continue;	/* ignore \0 */
