@@ -90,7 +90,7 @@ copies.
  ** commands needed for switching from one to the other.
  **/
 
-char *charset1[128] = {
+const char *charset1[128] = {
 	/* 0x00 ... 0x1f        */
 
 /**

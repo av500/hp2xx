@@ -137,7 +137,7 @@ static void ASCII_to_char(int c)
  **/
 {
 	HPGL_Pt p;
-	char *ptr;
+	const char *ptr;
 	int outside = 0;
 	static int warnfont = 0;
 	int SafeLineType = CurrentLineType;
@@ -1118,7 +1118,7 @@ static void ASCII_set_center(int c)
 {
 	HPGL_Pt p, center;
 	int cnt;
-	char *ptr;
+	const char *ptr;
 
 	switch (tp->font) {
 

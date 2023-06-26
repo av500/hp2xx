@@ -77,7 +77,7 @@ copies.
  **
  **/
 
-char *charset205[256] = {
+const char *charset205[256] = {
 	/* 0x00 ... 0x1f        */
 
 /**
