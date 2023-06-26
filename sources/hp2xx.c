@@ -812,6 +812,7 @@ DBG printf("DEF_PC\n");
 	}
 }
 
+static FILE *hd = NULL;
 
 
 /**************************************************************************
@@ -839,13 +840,14 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
    **/
 
 	if (*pi->in_file == '-')
-		pi->hd = stdin;
-	else if (pi->hd == NULL) {
-		if ((pi->hd = fopen(pi->in_file, READ_BIN)) == NULL) {
+		hd = stdin;
+	else if (hd == NULL) {
+		if ((hd = fopen(pi->in_file, READ_BIN)) == NULL) {
 			PError("hp2xx (while opening HPGL file)");
 			return ERROR;
 		}
 	}
+	pi->hd = hd;
   /**
    ** Open temporary intermediate file.
    **
@@ -857,19 +859,19 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
    **/
 
 #if defined(DOS) && defined (GNU)
-	if ((pg->td = fopen("hp2xx.$$$", "w+b")) == NULL)
+	if ((td = fopen("hp2xx.$$$", "w+b")) == NULL)
 #elif defined(AMIGA)
-	if ((pg->td = fopen("t:hp2xx.tmp", "w+b")) == NULL)
+	if ((td = fopen("t:hp2xx.tmp", "w+b")) == NULL)
 #else
-	if ((pg->td = tmpfile()) == NULL)
+	if ((td = tmpfile()) == NULL)
 #endif	/** !DOS && GNU	**/
 	{
 		PError("hp2xx -- opening temporary file");
 		return ERROR;
 	}
 	
-	td = pg->td;
-
+	pg->td = td;
+	
   /**
    ** Convert HPGL data into compact temporary binary file, and obtain
    ** scaling data (xmin/xmax/ymin/ymax in plotter coordinates)
@@ -877,8 +879,8 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
 	n_commands = 0;
 	read_HPGL(pg, pi);
 	if (n_commands <= 1 && n_commands >= 0) {
-		if (pi->hd != stdin) {
-			fclose(pi->hd);
+		if (hd != stdin) {
+			fclose(hd);
 			pi->hd = NULL;
 		}
 		return ERROR;

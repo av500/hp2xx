@@ -263,7 +263,7 @@ typedef struct {		/* Corresponding option(s)        */
 	float xoff, yoff;	/* -o xoff  -O yoff             */
 	HPGL_Pt hwlimit;	/* -W p2.x -H p2.y		*/
 	char *in_file;		/* Input file name ("-" = stdin) */
-	FILE *hd;		/* (internally needed)          */
+	void *hd;		/* (internally needed)          */
 } IN_PAR;
 
 /**
@@ -281,8 +281,8 @@ typedef struct {		/* Corresponding option(s)        */
 	PEN_W maxpensize;	/* (internally needed)          */
 	int is_color;		/* (internally needed)          */
 	int maxcolor;		/* (internally needed)          */
-	FILE *td;		/* (internally needed)          */
-	hp2xx_mode xx_mode;	/* (internally needed)          */
+	void *td;		/* (internally needed)          */
+	int xx_mode;	/* (internally needed)          */
 	int maxpens;		/* (internally needed)          */
 	int mapzero;		/* remapping of pen 0		*/
 } GEN_PAR;
