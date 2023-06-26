@@ -11,7 +11,12 @@
 *	und Liang-Barsky ( Durchfœhrung )
 */
 
-#include <stdio.h>
+#ifdef STM32
+  #include "printf.h"
+#else
+  #include <stdio.h>
+#endif
+
 #include <math.h>
 #include "clip.h"
 

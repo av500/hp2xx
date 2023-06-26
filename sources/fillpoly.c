@@ -1,4 +1,9 @@
-#include <stdio.h>
+#ifdef STM32
+  #include "printf.h"
+#else
+  #include <stdio.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

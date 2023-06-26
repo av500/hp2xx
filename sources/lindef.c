@@ -21,9 +21,7 @@ copies.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 */
 
-#include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <math.h>
 #include "lindef.h"
 #include "hpgl.h"
@@ -225,6 +223,9 @@ void set_line_attr(void * hd)
 }
 
 #ifndef STM32
+#include <stdlib.h>
+#include <stdio.h>
+
 int load_line_attr(FILE * td)
 {
 	LineAttrKind kind;

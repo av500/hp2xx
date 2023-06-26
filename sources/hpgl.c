@@ -101,7 +101,12 @@
  ** 02/06/02	      AJB  Moved HYPOT macro to hpgl.h - so we can use it in murphy.c
  **/
 
-#include <stdio.h>
+#ifdef STM32
+  #include "printf.h"
+#else
+  #include <stdio.h>
+#endif
+
 #include <stdlib.h>
 
 #ifndef _NO_VCL

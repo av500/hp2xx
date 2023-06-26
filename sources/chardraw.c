@@ -38,7 +38,12 @@ copies.
  ** 94/02/14 HWW  V 2.05b Adapted to changes in hp2xx.h
  **/
 
-#include <stdio.h>
+#ifdef STM32
+  #include "printf.h"
+#else
+  #include <stdio.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
