@@ -28,6 +28,8 @@
 
 #define MM_PER_DISPLAY_UNIT 0.31750
 
+void fig_poly_end(PEN_W, int, int, int, FILE *, int, long *, long *);
+
 int to_fig(const GEN_PAR * pg, const OUT_PAR * po)
 {
 
