@@ -61,6 +61,8 @@ copies.
 #include "pendef.h"
 #include "lindef.h"
 
+void reset_tmpfile(void);
+
 void reset_tmpfile(FILE *td)
 {
 	(void) lseek(fileno(td), 0L, SEEK_SET);

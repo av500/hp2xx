@@ -13,10 +13,6 @@ void HPGL_Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
 void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
 void HPGL_Pt_to_polygon (const HPGL_Pt pf );
 
-#ifdef EMF
-void reset_tmpfile(void);
-#endif
-
 #if defined __TURBOC__ || defined __STRICT_ANSI__
 #define	HYPOT(x,y)	sqrt((x)*(x)+(y)*(y))
 #else
