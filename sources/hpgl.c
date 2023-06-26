@@ -2121,7 +2121,7 @@ static void fwedges(void * hd, float cur_pensize)
 
 static void circles(void * hd)
 {
-	HPGL_Pt p, center, polyp = {};
+	HPGL_Pt p, center, polyp = {0.0, 0.0};
 	float eps, r;
 	float phi;
 	float SafeLinePatLen = CurrentLinePatLen;
