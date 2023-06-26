@@ -188,6 +188,24 @@ void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
 DBG printf("DEF_PC %d %d %d\n", red, green, blue);
 }
 
+int  read_c(void *ctx);
+void unread_c(int c, void *ctx);
+
+int read_c(void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	int c = getc(hd);
+	if (c == EOF)
+		return EOF;
+	return c;
+}
+
+void unread_c(int c, void *ctx)
+{
+	FILE *hd = (FILE*) ctx;
+	ungetc(c, hd);
+}
+
 /**************************************************************************
  **
  ** HPGL_to_TMP ():

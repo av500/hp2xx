@@ -481,20 +481,8 @@ static void Plotter_to_User_coord(const HPGL_Pt * p_plot, HPGL_Pt * p_usr)
 	p_usr->y = S1.y + (p_plot->y - P1.y) / Q.y;
 }
 
-static int read_c(void *ctx)
-{
-	FILE *hd = (FILE*) ctx;
-	int c = getc(hd);
-	if (c == EOF)
-		return EOF;
-	return c;
-}
-
-static void unread_c(int c, void *ctx)
-{
-	FILE *hd = (FILE*) ctx;
-	ungetc(c, hd);
-}
+int  read_c(void *ctx);
+void unread_c(int c, void *ctx);
 
 void HPGL_Pt_to_polygon(HPGL_Pt pf)
 {
