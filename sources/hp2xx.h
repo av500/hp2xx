@@ -66,6 +66,7 @@ copies.
  **/
 
 #include "pendef.h"
+#include "bresnham.h"
 
 /**
  ** Working with Pure C (the official descendant of Borland's
