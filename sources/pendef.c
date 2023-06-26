@@ -28,6 +28,7 @@ copies.
 
 PEN pt;
 
+#ifndef STM32
 int load_pen_width_table(FILE * td)
 {
 	PEN_N tp;
@@ -84,6 +85,7 @@ int load_pen_color_table(FILE * td)
 	set_color_rgb(tp, (BYTE) r, (BYTE) g, (BYTE) b);
 	return ((int) tp);
 }
+#endif
 
 void set_color_rgb(PEN_N index, BYTE r, BYTE g, BYTE b)
 {
