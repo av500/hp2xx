@@ -203,7 +203,6 @@ static short pen_down = FALSE;	/* Internal HP-GL book-keeping: */
 static short plot_rel = FALSE;
 static short saved_penstate = FALSE;	/* to track penstate over polygon mode */
 static short wu_relative = FALSE;
-static int again = FALSE;
 static char StrTerm = ETX;	/* String terminator char       */
 static short StrTermSilent = 1;	/* only terminates, or prints too */
 static unsigned int strbufsize = MAX_LB_LEN + 1;
@@ -3761,6 +3760,9 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 }
 
 #ifndef STM32
+
+static int again = FALSE;
+
 void
 adjust_input_transform(const GEN_PAR * pg, const IN_PAR * pi, OUT_PAR * po)
 {
