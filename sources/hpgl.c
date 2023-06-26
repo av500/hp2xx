@@ -295,6 +295,19 @@ static unsigned char b_max = 255;
 #define WU      0x5755
 #define XT	0x5854
 #define YT	0x5954
+
+#ifdef STM32
+static void my_exit(int err)
+{
+	while(1);
+}
+#else
+static void my_exit(int err)
+{
+	exit(err);
+}
+#endif
+
 static void par_err_exit(int code, int cmd, void * hd)
 {
 	const char *msg;
@@ -326,7 +339,7 @@ static void par_err_exit(int code, int cmd, void * hd)
 	Eprintf("\nError in command %c%c: %s\n", cmd >> 8, cmd & 0xFF,
 		msg);
 	Eprintf(" @ Cmd %ld\n", vec_cntr_w);
-	exit(ERROR);
+	my_exit(ERROR);
 }
 
 static void reset_HPGL(void)
@@ -1117,7 +1130,7 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 	default:
 		Eprintf("Illegal Pen Action: %d\n", cmd);
 		Eprintf("Error @ Cmd %ld\n", vec_cntr_w);
-		exit(ERROR);
+		my_exit(ERROR);
 	}
 	P_last = P;
 }
@@ -1173,8 +1186,8 @@ void read_string(char *buf, void *hd)
 	for (n = 0, c = read_c(hd); (c != EOF) && (c != StrTerm);
 	     c = read_c(hd)) {
 		if (n > strbufsize) {
-			fprintf(stderr, "\nNo memory !\n");
-			exit(ERROR);
+			fprintf(stderr, "\nNo memory %d %d!\n", n, strbufsize);
+			my_exit(ERROR);
 		}
 		if (c == '\0')
 			continue;	/* ignore \0 */
