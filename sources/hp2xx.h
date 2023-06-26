@@ -362,7 +362,7 @@ void PError(const char *);
 void SilentWait(void);
 void NormalWait(void);
 
-void plot_user_char(FILE *, short);
+void plot_user_char(void *, short);
 void read_HPGL(GEN_PAR *, const IN_PAR *);
 void adjust_input_transform(const GEN_PAR *, const IN_PAR *, OUT_PAR *);
 PlotCmd PlotCmd_from_tmpfile(FILE *td);

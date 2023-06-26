@@ -81,7 +81,7 @@ void set_line_style(SCHAR index, ...)
 
 }
 
-void set_line_style_by_UL(FILE * hd)
+void set_line_style_by_UL(void *hd)
 {
 	SCHAR index, pos_index, neg_index, count, i;
 	float factor, percentage;
@@ -196,7 +196,7 @@ void set_line_attr_defaults(void)
 #endif
 }
 
-void set_line_attr(FILE * hd)
+void set_line_attr(void * hd)
 {
 	float ftmp1;
 	float ftmp2;

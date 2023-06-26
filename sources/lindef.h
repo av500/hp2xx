@@ -48,9 +48,7 @@ extern  LINESTYLE lt;
 
 void set_line_style_defaults(void);
 void set_line_style(SCHAR index, ...);
-void set_line_style_by_UL(FILE *hd);
-
-void print_line_style(void);
+void set_line_style_by_UL(void *hd);
 
 /* line attributes */
 
@@ -85,7 +83,7 @@ extern LineAttr CurrentLineAttr;
 extern LineEnds CurrentLineEnd;    /* used in pre tempfile context only */
 
 void set_line_attr_defaults(void);
-void set_line_attr(FILE *hd);
+void set_line_attr(void *hd);
 void Line_Attr_to_tmpfile ( LineAttrKind kind, int value);
 int load_line_attr(FILE *td);
 

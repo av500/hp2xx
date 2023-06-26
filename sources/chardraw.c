@@ -1222,7 +1222,7 @@ void plot_symbol_char(char c)
 
 
 
-void plot_user_char(FILE * hd, short current_pen)
+void plot_user_char(void * hd, short current_pen)
 /**
  ** added by Alois Treindl 12-apr-93
  **/
