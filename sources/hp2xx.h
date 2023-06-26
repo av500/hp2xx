@@ -177,6 +177,26 @@ typedef unsigned char Byte;
 #define VERS_ADDITIONS "                              (c) 1999 - 2003 Martin Kroeker\n"
 #endif
 
+typedef struct {
+	float x, y;
+} HPGL_Pt;
+
+
+typedef enum {
+	NOP,		// 0 
+	MOVE_TO, 	// 1
+	DRAW_TO, 	// 2
+	PLOT_AT, 	// 3
+	SET_PEN, 	// 4
+	DEF_PW, 	// 5
+	DEF_PC, 	// 6
+	DEF_LA,		// 7
+	CMD_EOF,	// 8
+	SET_SPEED,	// 9
+} PlotCmd;
+
+
+#ifndef STM32
 
 /**
  ** When adding your special mode, add a symbol here.
@@ -204,11 +224,9 @@ typedef struct Row {
 	struct Row *prev, *next;	/* Rows are elements of a double-linked list    */
 } RowBuf;
 
-
 /**
  ** Struct holding the whole raster picture
  **/
-
 typedef struct {
 	int nr, nc, nb;		/* Number of rows / columns / bytes per row     */
 	int depth;		/* Depth: Number of bit planes (1 to 4)         */
@@ -217,30 +235,16 @@ typedef struct {
 	FILE *sd;		/* Swapfile pointer                             */
 } PicBuf;
 
-
-typedef struct {
-	float x, y;
-} HPGL_Pt;
-
-
-typedef enum {
-	NOP,		// 0 
-	MOVE_TO, 	// 1
-	DRAW_TO, 	// 2
-	PLOT_AT, 	// 3
-	SET_PEN, 	// 4
-	DEF_PW, 	// 5
-	DEF_PC, 	// 6
-	DEF_LA,		// 7
-	CMD_EOF,	// 8
-	SET_SPEED,	// 9
-} PlotCmd;
-
+PlotCmd PlotCmd_from_tmpfile(FILE *td);
+void HPGL_Pt_from_tmpfile(HPGL_Pt *, FILE *td);
 
 typedef struct {
 	hp2xx_mode mode;
 	char *modestr;
 } mode_list;
+
+#endif
+
 
 /**
  ** Input parameters: Used mainly during input file processing
@@ -261,33 +265,6 @@ typedef struct {		/* Corresponding option(s)        */
 	char *in_file;		/* Input file name ("-" = stdin) */
 	FILE *hd;		/* (internally needed)          */
 } IN_PAR;
-
-
-
-/**
- ** Output parameters: Used mainly during output file generation
- **/
-
-typedef struct {		/* Corresponding option(s)        */
-	Byte vga_mode;		/* -V vga_mode                  */
-	int vga_width;		/* (internally needed)          */
-	int dpi_x, dpi_y;	/* -d dpi_x  -y dpi_y           */
-	int init_p;		/* -i  (PCL only)               */
-	int init_p3gui;		/* -I  (PCL only)               */
-	int formfeed;		/* -F  (PCL only)               */
-	int specials;		/* -s specials  (PCL only)      */
-	int pagecount;		/* for naming multi-page output */
-	char *outfile;		/* -f outfile ("-" = stdout)    */
-	float xmin, ymin, xmax, ymax;	/* (internally needed)          */
-	float xoff, yoff;	/* Internal copies from IN_PAR  */
-	float width, height;	/* Internal copies from IN_PAR  */
-	float HP_to_xdots;	/* (internally needed)          */
-	float HP_to_ydots;	/* (internally needed)          */
-	PicBuf *picbuf;		/* (internally needed)          */
-	float zengage, zretract;	/* z min/max for 3d (currently only nc) */
-} OUT_PAR;
-
-
 
 /**
  ** General parameters: Used at various places
@@ -339,6 +316,40 @@ typedef struct {
  ** Prototypes:
  **/
 
+
+int HPGL_to_TMP(GEN_PAR *, IN_PAR *);
+
+void Eprintf(const char *, ...);
+void PError(const char *);
+
+void read_HPGL(GEN_PAR *, const IN_PAR *);
+
+/**
+ ** Output parameters: Used mainly during output file generation
+ **/
+#ifndef STM32
+void SilentWait(void);
+void NormalWait(void);
+
+typedef struct {		/* Corresponding option(s)        */
+	Byte vga_mode;		/* -V vga_mode                  */
+	int vga_width;		/* (internally needed)          */
+	int dpi_x, dpi_y;	/* -d dpi_x  -y dpi_y           */
+	int init_p;		/* -i  (PCL only)               */
+	int init_p3gui;		/* -I  (PCL only)               */
+	int formfeed;		/* -F  (PCL only)               */
+	int specials;		/* -s specials  (PCL only)      */
+	int pagecount;		/* for naming multi-page output */
+	char *outfile;		/* -f outfile ("-" = stdout)    */
+	float xmin, ymin, xmax, ymax;	/* (internally needed)          */
+	float xoff, yoff;	/* Internal copies from IN_PAR  */
+	float width, height;	/* Internal copies from IN_PAR  */
+	float HP_to_xdots;	/* (internally needed)          */
+	float HP_to_ydots;	/* (internally needed)          */
+	PicBuf *picbuf;		/* (internally needed)          */
+	float zengage, zretract;	/* z min/max for 3d (currently only nc) */
+} OUT_PAR;
+
 void Send_version(void);
 void Send_Copyright(void);
 void usage_msg(const GEN_PAR *, const IN_PAR *, const OUT_PAR *);
@@ -347,7 +358,6 @@ void preset_par(GEN_PAR *, IN_PAR *, OUT_PAR *);
 void reset_par(IN_PAR *);
 void autoset_outfile_name(const char *, const char *, char **);
 
-int HPGL_to_TMP(GEN_PAR *, IN_PAR *);
 int TMP_to_VEC(const GEN_PAR *, const OUT_PAR *);
 int TMP_to_BUF(const GEN_PAR *, OUT_PAR *);
 int BUF_to_RAS(const GEN_PAR *, OUT_PAR *);
@@ -357,27 +367,8 @@ void cleanup_i(IN_PAR *);
 void cleanup_o(OUT_PAR *);
 void cleanup(GEN_PAR *, IN_PAR *, OUT_PAR *);
 
-void Eprintf(const char *, ...);
-void PError(const char *);
-void SilentWait(void);
-void NormalWait(void);
-
-void plot_user_char(void *, short);
-void read_HPGL(GEN_PAR *, const IN_PAR *);
 void adjust_input_transform(const GEN_PAR *, const IN_PAR *, OUT_PAR *);
-PlotCmd PlotCmd_from_tmpfile(FILE *td);
-void HPGL_Pt_from_tmpfile(HPGL_Pt *, FILE *td);
-void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
-/*int read_float(float *, FILE *);*/
-float ceil_with_tolerance(float, float);
-void line(int relative, HPGL_Pt p);
-int read_PE_flags(GEN_PAR *, int, void *, PE_flags *);
-int read_PE_coord(int, void *, PE_flags *, float *);
-int read_PE_pair(int, void *, PE_flags *, HPGL_Pt *);
-void read_PE(GEN_PAR *, void *);
-int decode_PE_char(int, PE_flags *);
-int isPEterm(int, PE_flags *);
-void to_ATARI(GEN_PAR *, FILE *);
+
 int to_mftex(const GEN_PAR *, const OUT_PAR *, int);
 int to_eps(const GEN_PAR *, const OUT_PAR *);
 int to_rgip(const GEN_PAR *, const OUT_PAR *);
@@ -425,20 +416,18 @@ int PicBuf_to_HGC(const GEN_PAR *, const OUT_PAR *);
 int PicBuf_to_VGA(const GEN_PAR *, const OUT_PAR *);
 int PicBuf_to_X11(const GEN_PAR *, OUT_PAR *);
 
+
 #ifdef EMF
 int to_emf(const GEN_PAR * pg, const OUT_PAR * po);
 int to_emw(const GEN_PAR * pg, const OUT_PAR * po);
 int to_emp(const GEN_PAR * pg, const OUT_PAR * po);
 #endif
 
-void fill(HPGL_Pt polygon[], int numpoints, HPGL_Pt P1, HPGL_Pt P2,
-	  int scale_flag, int filltype, float spacing, float hatchangle);
-
 /*std_main*/
 void action_oldstyle(GEN_PAR *, IN_PAR *, OUT_PAR *);
-/*to_fig*/
-void fig_poly_end(PEN_W, int, int, int, FILE *, int, long *, long *);
 /*to_x11*/
 void win_close(void);
+
+#endif
 
 #endif				/*      __HP2XX_H       */

@@ -10,7 +10,7 @@ void Pen_to_tmpfile(int pen);
 void Speed_to_tmpfile(int speed);
 void Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
 void HPGL_Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
-
+void Pen_action_to_tmpfile(PlotCmd, const HPGL_Pt *, int);
 void HPGL_Pt_to_polygon (const HPGL_Pt pf );
 
 #ifdef EMF
@@ -28,5 +28,16 @@ extern short silent_mode;
 extern long vec_cntr_w;
 extern long n_commands;
 extern short record_off;
-extern FILE *temp_file;
 
+int read_PE_flags(GEN_PAR *, int, void *, PE_flags *);
+int read_PE_coord(int, void *, PE_flags *, float *);
+int read_PE_pair(int, void *, PE_flags *, HPGL_Pt *);
+void read_PE(GEN_PAR *, void *);
+int decode_PE_char(int, PE_flags *);
+int isPEterm(int, PE_flags *);
+
+float ceil_with_tolerance(float, float);
+void line(int relative, HPGL_Pt p);
+
+void fill(HPGL_Pt polygon[], int numpoints, HPGL_Pt P1, HPGL_Pt P2,
+	  int scale_flag, int filltype, float spacing, float hatchangle);

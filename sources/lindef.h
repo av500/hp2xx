@@ -85,7 +85,10 @@ extern LineEnds CurrentLineEnd;    /* used in pre tempfile context only */
 void set_line_attr_defaults(void);
 void set_line_attr(void *hd);
 void Line_Attr_to_tmpfile ( LineAttrKind kind, int value);
-int load_line_attr(FILE *td);
 
+#ifndef STM32
+#include <stdio.h>
+int load_line_attr(FILE *td);
+#endif
 
 #endif /* __LINDEF_H */

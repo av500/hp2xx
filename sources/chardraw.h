@@ -138,6 +138,8 @@ extern "C" {
 	void plot_string(char *, LB_Mode, short);
 	void plot_symbol_char(char);
 
+
+void plot_user_char(void *, short);
 #ifdef	__cplusplus
 }
 #endif
