@@ -894,7 +894,11 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
    ** scaling data (xmin/xmax/ymin/ymax in plotter coordinates)
    **/
 	n_commands = 0;
-	read_HPGL(pg, pi);
+	while(1) {
+		if(read_HPGL(pg, pi)) {
+			break;
+		}
+	}
 	if (n_commands <= 1 && n_commands >= 0) {
 		if (hd != stdin) {
 			fclose(hd);

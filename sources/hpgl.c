@@ -3670,7 +3670,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 }
 
 
-void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
+int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 /**
  ** This routine is the high-level entry for HP-GL processing.
  ** It reads the input stream character-by-character, identifies
@@ -3679,31 +3679,16 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
  ** commands. It finally reports on this parsing process.
  **/
 {
-	int c;
 	int cmd;
 
-	vec_cntr_r = 0L;
-	vec_cntr_w = 0L;
-	n_unexpected = 0;
-	n_commands = 0;
-	n_unknown = 0;
-
 	void *ctx = (void*)pi->hd;
-	if ((c = read_c(ctx)) == EOF)
-		return;
-	else
-		unread_c(c, ctx);
 
-	if (!pg_flag)
-		init_HPGL(pg, pi);
-
-	if (!pg->quiet)
-		Eprintf("\nReading HPGL file\n");
-
-  /**
-   ** MAIN parser LOOP!!
-   **/
-	while ((c = read_c(ctx)) != EOF) {
+	int c = read_c(ctx);
+	
+	if(c == EOF) {
+		return 1;
+	}
+//	while ((c = read_c(ctx)) != EOF) {
 		switch (c) {
 #ifdef MUTOH_KLUGE
 		case '\a':
@@ -3715,62 +3700,54 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			read_ESC_cmd(pi->hd, TRUE);	/* ESC sequence */
 			break;
 		default:
-			if ((c < 'A') || (c > 'z')
-			    || ((c > 'Z') && (c < 'a')))
+			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
 				break;
+			}
+			// PG
 			if (c == 'P') {
 				if ((cmd = read_c(ctx)) == 'G') {
 					page_number++;
-/*		fprintf(stderr, "stream-reading PG: page_number now %d\n", page_number);*/
-					record_off =
-					    (first_page > page_number)
-					    || ((last_page < page_number)
-						&& (last_page > 0));
+// fprintf(stderr, "stream-reading PG: page_number now %d\n", page_number);
+					record_off = (first_page > page_number) || ((last_page < page_number) && (last_page > 0));
 					goto END;
 				} else {
 					if (cmd == EOF)
-						return;
+						return 1;
 					unread_c(cmd, ctx);
 				}
 			}
+			// NR
 			if (c == 'N') {
 				if ((cmd = read_c(ctx)) == 'R') {
-/*	  fprintf(stderr,"***NR***\n");'*/
 					page_number++;
-/*		fprintf(stderr, "stream-reading NR: page_number now %d\n", page_number);*/
-					record_off =
-					    (first_page > page_number)
-					    || ((last_page < page_number)
-						&& (last_page > 0));
+// fprintf(stderr, "stream-reading NR: page_number now %d\n", page_number);
+					record_off = (first_page > page_number) || ((last_page < page_number) && (last_page > 0));
 					goto END;
 				} else {
 					if (cmd == EOF)
-						return;
+						return 1;
 					unread_c(cmd, ctx);
 				}
 			}
+			// AF
+			// AH
 			if (c == 'A') {
 				cmd = read_c(ctx);
 				if (cmd == 'F' || cmd == 'H') {
-/*	  fprintf(stderr,"***AF/AH***\n");*/
 					page_number++;
-/*		fprintf(stderr, "stream-reading AF/AH: page_number now %d\n", page_number);*/
-					record_off =
-					    (first_page > page_number)
-					    || ((last_page < page_number)
-						&& (last_page > 0));
+// fprintf(stderr, "stream-reading AF/AH: page_number now %d\n", page_number);
+					record_off = (first_page > page_number) || ((last_page < page_number) && (last_page > 0));
 					goto END;
 				} else {
 					if (cmd == EOF)
-						return;
+						return 1;
 					unread_c(cmd, ctx);
 				}
 			}
 			cmd = c << 8;
 			if ((c = read_c(ctx)) == EOF)
-				return;
-			if ((c < 'A') || (c > 'z')
-			    || ((c > 'Z') && (c < 'a'))) {
+				return 1;
+			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
 				unread_c(c, ctx);
 				break;
 			}
@@ -3778,12 +3755,16 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			n_commands++;
 			read_HPGL_cmd(pg, cmd, pi->hd);
 		}
-	}
-	if (c == EOF) {
-		page_number++;
-/*			fprintf(stderr, "EOF : page_number now %d\n", page_number);*/
-	}
-      END:
+//	}
+	c = read_c(ctx);
+	if(c != EOF) {
+		unread_c(c, ctx);
+		return 0;
+	}		
+
+	page_number++;
+// fprintf(stderr, "EOF : page_number now %d\n", page_number);
+END:
 	if (!pg->quiet && n_commands > 0) {
 		Eprintf("Page number %d of range %d - %d\n",
 			page_number - 1, pi->first_page, pi->last_page);
@@ -3791,25 +3772,17 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 		Eprintf("HPGL command(s) ignored: %d\n", n_unknown);
 		Eprintf("Unexpected event(s):  %d\n", n_unexpected);
 		Eprintf("Internal command(s):  %ld\n", vec_cntr_w);
-		if ((pi->first_page > page_number - 1)
-		    || ((pi->last_page < page_number - 1)
-			&& (pi->last_page > 0))) {
+		if ((pi->first_page > page_number - 1) || ((pi->last_page < page_number - 1) && (pi->last_page > 0))) {
 			n_commands = -1;
-			Eprintf
-			    ("Page %d not drawn (outside selected range %d-%d)\n",
-			     page_number - 1, pi->first_page,
-			     pi->last_page);
+			Eprintf("Page %d not drawn (outside selected range %d-%d)\n", page_number - 1, pi->first_page, pi->last_page);
 		}
 		Eprintf("Pens used: ");
-/*      for (c=0; c < NUMPENS; c++, pens_in_use >>= 1)
-   if (pens_in_use & 1)
- */
 		for (c = 0; c < NUMPENS; c++)
 			if (pens_in_use[c] == 1)
 				Eprintf("%d ", c);
-/*                      Eprintf ("%d ", c+1); */
 		Eprintf("\nMax. number of pages: %d\n", page_number - 1);
 	}
+	return 1;
 }
 
 #ifndef EMBEDDED

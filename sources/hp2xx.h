@@ -313,7 +313,7 @@ void Eprintf(const char *, ...);
 void PError(const char *);
 
 void init_HPGL(GEN_PAR *pg, const IN_PAR *pi);
-void read_HPGL(GEN_PAR *, const IN_PAR *);
+int  read_HPGL(GEN_PAR *pg, const IN_PAR *pi);
 
 /**
  ** Output parameters: Used mainly during output file generation
