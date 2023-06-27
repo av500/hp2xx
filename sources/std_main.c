@@ -117,6 +117,8 @@ void action_oldstyle(GEN_PAR * pg, IN_PAR * pi, OUT_PAR * po)
 	if (!pg->quiet)
 		Send_version();
 
+	init_HPGL(pg, pi);
+
 	strcpy(savedname, po->outfile);
 	for (;;) {
   /**

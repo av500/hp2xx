@@ -427,7 +427,7 @@ static void reset_HPGL(void)
 	    || ((last_page < page_number) && (last_page > 0));
 }
 
-static void init_HPGL(GEN_PAR * pg, const IN_PAR * pi)
+void init_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 {
 /**
  ** Re-init. global var's for multiple-file applications

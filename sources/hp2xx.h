@@ -315,6 +315,7 @@ int HPGL_to_TMP(GEN_PAR *, IN_PAR *);
 void Eprintf(const char *, ...);
 void PError(const char *);
 
+void init_HPGL(GEN_PAR *pg, const IN_PAR *pi);
 void read_HPGL(GEN_PAR *, const IN_PAR *);
 
 /**
