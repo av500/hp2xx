@@ -66,7 +66,6 @@ copies.
  **/
 
 #include "pendef.h"
-#include "bresnham.h"
 
 /**
  ** Working with Pure C (the official descendant of Borland's
@@ -90,8 +89,6 @@ copies.
 #endif
 
 #endif
-
-
 
 #ifdef GNU
 #define   getch getkey
@@ -194,7 +191,6 @@ typedef enum {
 
 
 #ifndef STM32
-
 /**
  ** When adding your special mode, add a symbol here.
  ** Please note the alphabetical order (and keep it).
