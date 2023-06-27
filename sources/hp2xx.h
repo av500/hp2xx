@@ -309,9 +309,6 @@ typedef struct {
  ** Prototypes:
  **/
 
-
-int HPGL_to_TMP(GEN_PAR *, IN_PAR *);
-
 void Eprintf(const char *, ...);
 void PError(const char *);
 

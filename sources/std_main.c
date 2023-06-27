@@ -104,7 +104,7 @@ void NormalWait(void)
 }
 
 
-
+int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi);
 
 void action_oldstyle(GEN_PAR * pg, IN_PAR * pi, OUT_PAR * po)
 {
