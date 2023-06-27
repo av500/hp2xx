@@ -1140,6 +1140,46 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 	P_last = P;
 }
 
+static float __atof(const char *num)
+{
+	if (!num || !*num) {
+		return 0;
+	}
+	
+	float integer  = 0.0f;
+	float fraction = 0.0f;
+	int divisor    = 1;
+	int sign       = 1;
+	int dot        = 0;
+
+	if (*num == '-') {
+		++num;
+		sign = -1;
+	} else if (*num == '+') {
+		++num;
+	}
+	while (*num != '\0') {
+		if (*num >= '0' && *num <= '9') {
+			if (dot) {
+				fraction = fraction * 10.0f + (float)(*num - '0');
+				divisor *= 10;
+			} else {
+				integer = integer * 10.0f + (float)(*num - '0');
+			}
+		} else if (*num == '.') {
+			if (dot) {
+				return sign * (integer + fraction / divisor);
+			} else {
+				dot = 1;
+			}
+		} else {
+			return sign * (integer + fraction / divisor);
+		}
+		++num;
+	}
+	return sign * (integer + fraction / divisor);
+}
+
 int read_float(float *pnum, void *hd)
 /**
  ** Main work-horse for parameter input:
@@ -1177,9 +1217,7 @@ int read_float(float *pnum, void *hd)
 	*ptr = '\0';
 	if (c != EOF)
 		unread_c(c, hd);
-
-	if (sscanf(numbuf, "%f", pnum) != 1)
-		return 2;	/* Should never happen  */
+	*pnum = __atof(numbuf);
 	return 0;
 }
 
