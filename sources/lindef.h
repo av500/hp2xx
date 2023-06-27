@@ -86,7 +86,7 @@ void set_line_attr_defaults(void);
 void set_line_attr(void *hd);
 void Line_Attr_to_tmpfile ( LineAttrKind kind, int value);
 
-#ifndef STM32
+#ifndef EMBEDDED
 #include <stdio.h>
 int load_line_attr(FILE *td);
 #endif

@@ -190,7 +190,7 @@ typedef enum {
 } PlotCmd;
 
 
-#ifndef STM32
+#ifndef EMBEDDED
 /**
  ** When adding your special mode, add a symbol here.
  ** Please note the alphabetical order (and keep it).
@@ -320,7 +320,7 @@ void read_HPGL(GEN_PAR *, const IN_PAR *);
 /**
  ** Output parameters: Used mainly during output file generation
  **/
-#ifndef STM32
+#ifndef EMBEDDED
 void SilentWait(void);
 void NormalWait(void);
 

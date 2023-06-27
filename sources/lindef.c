@@ -222,7 +222,7 @@ void set_line_attr(void * hd)
 	return;
 }
 
-#ifndef STM32
+#ifndef EMBEDDED
 #include <stdlib.h>
 #include <stdio.h>
 

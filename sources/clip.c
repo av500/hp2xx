@@ -11,7 +11,7 @@
 *	und Liang-Barsky ( Durchfœhrung )
 */
 
-#ifdef STM32
+#ifdef EMBDEDDED
   #include "printf.h"
 #else
   #include <stdio.h>

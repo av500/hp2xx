@@ -1,4 +1,4 @@
-#ifdef STM32
+#ifdef EMBEDDED
   #include "printf.h"
 #else
   #include <stdio.h>

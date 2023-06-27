@@ -21,14 +21,14 @@ copies.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "hpgl.h"
 #include "pendef.h"
 
 PEN pt;
 
-#ifndef STM32
+#ifndef EMBEDDED
+#include <stdio.h>
 int load_pen_width_table(FILE * td)
 {
 	PEN_N tp;

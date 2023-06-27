@@ -101,7 +101,7 @@
  ** 02/06/02	      AJB  Moved HYPOT macro to hpgl.h - so we can use it in murphy.c
  **/
 
-#ifdef STM32
+#ifdef EMBEDDED
   #include "printf.h"
 #else
   #include <stdio.h>
@@ -301,7 +301,7 @@ static unsigned char b_max = 255;
 #define XT	0x5854
 #define YT	0x5954
 
-#ifdef STM32
+#ifdef EMBEDDED
 static void my_exit(int err)
 {
 	while(1);
@@ -3803,7 +3803,7 @@ void read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 	}
 }
 
-#ifndef STM32
+#ifndef EMBEDDED
 
 static int again = FALSE;
 
