@@ -1193,30 +1193,41 @@ int read_float(float *pnum, void *hd)
  **/
 {
 	int c;
-	char *ptr, numbuf[80];
-
-	for (c = read_c(hd);
-	     (c != '.') && (c != '+') && (c != '-') && ((c < '0')
-							|| (c > '9'));
-	     c = read_c(hd)) {
-		if (c == EOF)	/* Wait for number      */
-			return EOF;	/* Should not happen    */
-		if (c == ';')
-			return 1;	/* Terminator reached   */
-		if (((c >= 'A') && (c <= 'Z')) ||
-		    ((c >= 'a') && (c <= 'a')) || (c == ESC)) {
+	for (	c = read_c(hd);
+		
+		(c != '.') && 
+		(c != '+') && 
+		(c != '-') && 
+		((c < '0') || (c > '9'));
+	     	
+		c = read_c(hd)) {
+		if (c == EOF) {	// Wait for number			
+			return EOF;	// Should not happen
+		}
+		if (c == ';') {
+			return 1;	// Terminator reached
+		}
+		if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'a')) || (c == ESC)) {
 			unread_c(c, hd);
-			return 1;	/* Next Mnemonic reached */
+			return 1;	// Next Mnemonic reached
 		}
 	}
-	/* Number found: Get it */
-	ptr = numbuf;
-	for (*ptr++ = c, c = read_c(hd);
-	     ((c >= '0') && (c <= '9')) || (c == '.'); c = read_c(hd))
-		*ptr++ = c;	/* Read number          */
+	// Number found: Get it
+	char numbuf[80];
+	char *ptr = numbuf;
+	for (	*ptr++ = c, c = read_c(hd);
+	     	
+		((c >= '0') && (c <= '9')) || (c == '.'); 
+		
+		c = read_c(hd)) {
+		
+		*ptr++ = c;	// Read number
+	}
 	*ptr = '\0';
-	if (c != EOF)
+	if (c != EOF) {
 		unread_c(c, hd);
+	}
+
 	*pnum = __atof(numbuf);
 	return 0;
 }
