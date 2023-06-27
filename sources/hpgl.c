@@ -3332,11 +3332,9 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 						do {
 							tmpstr[0] =
 							    read_c(hd);
-							if (!silent_mode)
-								fputc
-								    (tmpstr
-								     [0],
-								     stderr);
+							if (!silent_mode) {
+								//fputc(tmpstr[0], stderr);
+							}
 						}
 						while (tmpstr[0] != '"');
 					}
