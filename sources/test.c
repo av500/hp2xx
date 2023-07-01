@@ -206,29 +206,17 @@ void unread_c(int c, void *ctx)
 	ungetc(c, hd);
 }
 
-/**************************************************************************
- **
- ** HPGL_to_TMP ():
- **
- ** This call opens a single HP-GL input file, scans and interprets
- ** its commands, and writes elementary move/draw commands into
- ** a temporary file.
- **	The input file is closed after returning, but the temp. file
- ** is kept open. You may re-use it multiple times. Close it finally!
- **	Calling this function invalidates later processing stages like
- ** the picture buffer.
- **/
-
-int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
+int main(int argc, char *argv[])
 {
-  /**
-   ** Clean up previous leftovers (if any)
-   **/
-
+	GEN_PAR  Pg;
+	GEN_PAR *pg = &Pg;
+	IN_PAR   Pi;
+	IN_PAR  *pi = &Pi;
+	
+	__preset_par(pg, pi);
 	__cleanup_g(pg);
-  /**
-   ** Open HP-GL input file. Use stdin if selected.
-   **/
+
+	pi->in_file = argv[1];
 
 	if (*pi->in_file == '-')
 		pi->hd = stdin;
@@ -238,12 +226,13 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
 			return ERROR;
 		}
 	}
-  /**
-   ** Convert HPGL data into compact temporary binary file, and obtain
-   ** scaling data (xmin/xmax/ymin/ymax in plotter coordinates)
-   **/
+
 	n_commands = 0;
-	read_HPGL(pg, pi);
+	while(1) {
+		if(read_HPGL(pg, pi)) {
+			break;
+		}
+	}
 	if (n_commands <= 1 && n_commands >= 0) {
 		if (pi->hd != stdin) {
 			fclose(pi->hd);
@@ -251,22 +240,7 @@ int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi)
 		}
 		return ERROR;
 	}
-	return 0;
-}
 
-int main(int argc, char *argv[])
-{
-	GEN_PAR Pg;
-	IN_PAR Pi;
-	
-	__preset_par(&Pg, &Pi);
-
-	Pi.in_file = argv[1];
-	
-	if(HPGL_to_TMP(&Pg, &Pi)) {
-printf("error!\n");		
-	}
-
-	__cleanup(&Pg, &Pi);
+	__cleanup(pg, pi);
 	return NOERROR;
 }

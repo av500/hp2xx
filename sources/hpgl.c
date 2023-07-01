@@ -208,7 +208,7 @@ static short pen_down = FALSE;	/* Internal HP-GL book-keeping: */
 static short plot_rel = FALSE;
 static short saved_penstate = FALSE;	/* to track penstate over polygon mode */
 static short wu_relative = FALSE;
-static char StrTerm = ETX;	/* String terminator char       */
+char StrTerm = ETX;	/* String terminator char       */
 static short StrTermSilent = 1;	/* only terminates, or prints too */
 static unsigned int strbufsize = MAX_LB_LEN + 1;
 static char strbuf[MAX_LB_LEN + 1];
@@ -3670,6 +3670,8 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 }
 
 
+void hp2xx_reply(char *reply);
+
 int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 /**
  ** This routine is the high-level entry for HP-GL processing.
@@ -3703,6 +3705,25 @@ int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
 				break;
 			}
+#ifdef EMBEDDED
+			// OI
+			if (c == 'O') {
+				cmd = read_c(ctx);
+				switch(cmd) {
+				case 'I':
+					hp2xx_reply("16709A");
+					break;
+				case 'S':
+					hp2xx_reply("42");
+					break;
+				case EOF:
+					return 1;
+				default:
+					unread_c(cmd, ctx);
+					break;
+				}				
+			}
+#endif
 			// PG
 			if (c == 'P') {
 				if ((cmd = read_c(ctx)) == 'G') {
