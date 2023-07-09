@@ -344,7 +344,9 @@ static void par_err_exit(int code, int cmd, void * hd)
 	Eprintf("\nError in command %c%c: %s\n", cmd >> 8, cmd & 0xFF,
 		msg);
 	Eprintf(" @ Cmd %ld\n", vec_cntr_w);
+#ifndef EMBEDDED
 	my_exit(ERROR);
+#endif
 }
 
 static void reset_HPGL(void)
