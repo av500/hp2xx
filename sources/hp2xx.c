@@ -651,6 +651,11 @@ static size_t write_bytes(const void *ptr, size_t size, size_t nmemb, void *ctx)
 	return fwrite((void*)ptr, size, nmemb, f);
 }
 
+void Init_to_tmpfile(void)
+{
+DBG printf("INIT\n");
+}
+
 void Pen_to_tmpfile(int pen)
 {
 	if (record_off)

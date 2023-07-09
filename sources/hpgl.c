@@ -3357,6 +3357,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 		/* fall through to initialization code now */
 	case DF:		/* Set to default               */
 	case IN:		/* Initialize */
+		Init_to_tmpfile();
 		reset_HPGL();
 		tp->CR_point = HP_pos;
 		break;

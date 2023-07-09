@@ -134,6 +134,11 @@ static void __cleanup(GEN_PAR * pg, IN_PAR * pi)
 
 #define DBG if(1)
 
+void Init_to_tmpfile(void)
+{
+DBG printf("INIT\n");
+}
+
 void Pen_to_tmpfile(int pen)
 {
 	if (record_off)

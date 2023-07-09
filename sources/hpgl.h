@@ -11,6 +11,7 @@
 int read_float (float *pnum, void * hd);
 void read_string (char *target, void *);
 
+void Init_to_tmpfile(void);
 void Pen_to_tmpfile(int pen);
 void Speed_to_tmpfile(int speed);
 void Pt_to_tmpfile (PlotCmd cmd, const HPGL_Pt * pf);
