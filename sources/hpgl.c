@@ -440,6 +440,7 @@ void init_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 	ymin = pi->y0;
 	xmax = pi->x1;
 	ymax = pi->y1;
+Eprintf("limits: (%g, %g) ... (%g, %g)\n", xmin, ymin, xmax, ymax);
 	fixedcolor = (short) pi->hwcolor;
 	fixedwidth = (short) pi->hwsize;
 	r_base = g_base = b_base = 0;
@@ -2843,7 +2844,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 			break;
 		}
 		ps_flag = 1;
-/*      fprintf(stderr,"min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);*/
+Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 		M.x = myheight;
 		M.y = mywidth;
 		p1.x = 0;
@@ -2878,7 +2879,7 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 		ymin = MIN(p2.y, ymin);
 		xmax = MAX(p2.x, xmax);
 		ymax = MAX(p2.y, ymax);
-/*      fprintf(stderr,"min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);*/
+Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 
 /* add the following - to get the correct linetype scale etc */
 		P1.x = 0.;
@@ -3804,6 +3805,7 @@ END:
 			if (pens_in_use[c] == 1)
 				Eprintf("%d ", c);
 		Eprintf("\nMax. number of pages: %d\n", page_number - 1);
+		Eprintf("Coordinate range: (%g, %g) ... (%g, %g)\n", xmin, ymin, xmax, ymax);
 	}
 	return 1;
 }
