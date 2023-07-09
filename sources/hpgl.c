@@ -126,14 +126,14 @@
 
 #define	ETX		'\003'
 
-#define P1X_default	0.0	/* drop margins       */
-#define P1Y_default	0.0
+#define P1X_default	328.0	// HP7225 P1, P2 default
+#define P1Y_default	279.0
 
-#define P2X_default   11420.	/* HP7225 limits */
-#define P2Y_default   8140.
+#define P2X_default   10328.0	
+#define P2Y_default    7479.0
 
-#define PSX_default   11420.
-#define PSY_default   8140.
+#define PSX_default   11420.0	// HP7225 hard clip limits
+#define PSY_default    8140.0
 
 #ifdef NORINT
 #define rint(a) (long)(a+0.5)
