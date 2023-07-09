@@ -312,6 +312,8 @@ typedef struct {
 void Eprintf(const char *, ...);
 void PError(const char *);
 
+int HPGL_to_TMP(GEN_PAR * pg, IN_PAR * pi);
+
 void init_HPGL(GEN_PAR *pg, const IN_PAR *pi);
 int  read_HPGL(GEN_PAR *pg, const IN_PAR *pi);
 
