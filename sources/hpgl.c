@@ -3067,14 +3067,13 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
 	case IW:
 		iwflag = 1;
 		if (read_float(&C1.x, hd)) {	/* No number found  */
-			if (P1.x == P1X_default && P1.y == P1Y_default
-			    && P2.x == P2X_default
-			    && P2.y == P2Y_default) {
-				iwflag = 0;
-				break;
-			}
-			C1 = P1;
-			C2 = P2;
+
+			// reset to hard clip limits:
+			iwflag = 0;
+			C1.x = 0;
+			C1.y = 0;
+			C2.x = PSX_default;
+			C2.y = PSY_default;
 			if (scale_flag) {
 				C1 = S1;
 				C2 = S2;
