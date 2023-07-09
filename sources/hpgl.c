@@ -381,6 +381,8 @@ static void reset_HPGL(void)
 
 	P1.x = P1X_default;
 	P1.y = P1Y_default;
+	P2.x = P2X_default;
+	P2.y = P2Y_default;
 
 	Diag_P1_P2 = /*@-unrecog@ */ HYPOT(P2.x - P1.x, P2.y - P1.y);
 	CurrentLinePatLen = 0.04 * Diag_P1_P2;
