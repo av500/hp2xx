@@ -1127,6 +1127,9 @@ void Pen_action_to_tmpfile(PlotCmd cmd, const HPGL_Pt * p, int scaled)
 
 	switch (cmd) {
 	case MOVE_TO:
+		if(!mv_flag) {
+			HPGL_Pt_to_tmpfile(MOVE_TO, &P_last);
+		}
 		mv_flag = TRUE;
 		break;
 
