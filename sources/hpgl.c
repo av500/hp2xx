@@ -103,6 +103,7 @@
 
 #ifdef EMBEDDED
   #include "printf.h"
+  void hp2xx_reply(char *reply);
 #else
   #include <stdio.h>
 #endif
@@ -264,7 +265,14 @@ static unsigned char b_max = 255;
 #define MG      0x4D47
 #define NP      0x4E50
 #define NR      0x4E52
+#define OC	0x4F43 // vp
+#define OD	0x4F44 // vp
+#define OE	0x4F45 // vp
+#define OF	0x4F46 // vp
+#define OI	0x4F49 // vp
+#define OO	0x4F4F // vp
 #define OP	0x4F50
+#define OS	0x4F53 // vp
 #define OW	0x4F57
 #define PA	0x5041
 #define PB	0x5042
@@ -3130,17 +3138,54 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 
 		break;
 
+#ifdef EMBEDDED
+	case OC:
+		hp2xx_reply("OC??\r\n");
+		break;
+	case OD:
+		hp2xx_reply("OD??\r\n");
+		break;
+	case OE:
+		hp2xx_reply("0\r\n");
+		break;
+	case OF:
+		hp2xx_reply("40,40\r\n");
+		break;
+	case OI:
+		hp2xx_reply("16709A\r\n");
+		break;
+	case OO:
+		hp2xx_reply("0,0,0,0,0,0,0,0\r\n");
+		break;
+	case OS:
+		hp2xx_reply("42\r\n");
+		break;
+#endif
+
 	case OP:		/* Output reference Points P1,P2 */
-		if (!silent_mode) {
-			//Eprintf("\nP1 = (%g, %g)\n", P1.x, P1.y);
-			//Eprintf("P2 = (%g, %g)\n", P2.x, P2.y);
-		}
+#ifdef EMBEDDED
+	{
+		char rsp[32];
+		sprintf(rsp, "%d,%d,%d,%d\r\n", (int)P1.x, (int)P1.y, (int)P2.x, (int)P2.y);
+		hp2xx_reply(rsp);
+	}
+#else
+		Eprintf("P1 = (%g, %g)  ", P1.x, P1.y);
+		Eprintf("P2 = (%g, %g)\n", P2.x, P2.y);
+
+#endif
 		break;
 	case OW:		/* Output clip box  */
-		if (!silent_mode) {
-			//Eprintf("\nC1 = (%g, %g)\n", C1.x, C1.y);
-			//Eprintf("C2 = (%g, %g)\n", C2.x, C2.y);
-		}
+#ifdef EMBEDDED
+	{
+		char rsp[32];
+		sprintf(rsp, "%d,%d,%d,%d\r\n", (int)C1.x, (int)C1.y, (int)C2.x, (int)C2.y);
+		hp2xx_reply(rsp);
+	}
+#else
+		Eprintf("C1 = (%g, %g)  ", C1.x, C1.y);
+		Eprintf("C2 = (%g, %g)\n", C2.x, C2.y);
+#endif
 		break;
 
 	case AF:
@@ -3674,9 +3719,6 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 	}
 }
 
-
-void hp2xx_reply(char *reply);
-
 int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 /**
  ** This routine is the high-level entry for HP-GL processing.
@@ -3710,25 +3752,6 @@ int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
 				break;
 			}
-#ifdef EMBEDDED
-			// OI
-			if (c == 'O') {
-				cmd = read_c(ctx);
-				switch(cmd) {
-				case 'I':
-					hp2xx_reply("16709A");
-					break;
-				case 'S':
-					hp2xx_reply("42");
-					break;
-				case EOF:
-					return 1;
-				default:
-					unread_c(cmd, ctx);
-					break;
-				}				
-			}
-#endif
 			// PG
 			if (c == 'P') {
 				if ((cmd = read_c(ctx)) == 'G') {
