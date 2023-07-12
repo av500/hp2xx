@@ -2279,6 +2279,7 @@ static void circles(void * hd)
 	} else
 		Pen_action_to_tmpfile(DRAW_TO, &p, scale_flag);
 
+#ifndef EMBEDDED
 	if (!polygon_mode) {
 		/* draw one overlapping segment to avoid leaving gap with wide pens */
 		p.x = center.x + r * cos(eps);
@@ -2303,11 +2304,11 @@ static void circles(void * hd)
 				polyp.x = p.x;
 				polyp.y = p.y;
 			} else {
-				Pen_action_to_tmpfile(DRAW_TO, &p,
-						      scale_flag);
+				Pen_action_to_tmpfile(DRAW_TO, &p, scale_flag);
 			}
 		}
 	}
+#endif
 	Pen_action_to_tmpfile(MOVE_TO, &center, scale_flag);
 
 	CurrentLinePatLen = SafeLinePatLen;	/* Restore */
