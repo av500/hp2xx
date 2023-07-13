@@ -396,6 +396,7 @@ static void reset_HPGL(void)
 
 	Diag_P1_P2 = /*@-unrecog@ */ HYPOT(P2.x - P1.x, P2.y - P1.y);
 	CurrentLinePatLen = 0.04 * Diag_P1_P2;
+//Eprintf("IN CurrentLinePatLen %.3f\n", CurrentLinePatLen);
 	pat_pos = 0.0;
 	scale_flag = FALSE;
 	S1 = P1;
@@ -1023,13 +1024,15 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 	dy = pb->y - pa->y;
 	seg_len = HYPOT(dx, dy);
 
+//Eprintf("\t\t\t\t\t\t\t%d  %.3f | %.3f  %.3f | %.3f  %.3f | %.3f\n",CurrentLineType, CurrentLinePatLen, pa->x,pa->y,pb->x,pb->y, seg_len);
+
 	switch (CurrentLineType) {
 
 	case LT_solid:
 		if (seg_len < 1.e-8) {
 			if (!silent_mode)
 				Eprintf
-				    ("Warning: Zero line segment length -- skipped\n");
+				    ("Warning: 1 Zero line segment length -- skipped\n");
 			return;	/* No line to draw ??           */
 		}
 		HPGL_Pt_to_tmpfile(DRAW_TO, pb);
@@ -1039,7 +1042,7 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 		if (seg_len < 1.e-8) {
 			if (!silent_mode)
 				Eprintf
-				    ("Warning: Zero line segment length -- skipped\n");
+				    ("Warning: 2 Zero line segment length -- skipped\n");
 			return;	/* No line to draw ??           */
 		}
 		pat_pos = 0.0;	/* Reset to start-of-pattern    */
@@ -1068,7 +1071,7 @@ static void Line_Generator(HPGL_Pt * pa, const HPGL_Pt * pb, int mv_flag)
 		if (seg_len < 1.e-8) {
 			if (!silent_mode)
 				Eprintf
-				    ("Warning: Zero line segment length -- skipped\n");
+				    ("Warning: 3 Zero line segment length -- skipped\n");
 			return;	/* No line to draw ??           */
 		}
 		if (mv_flag)	/* Last move ends old line pattern      */
@@ -2906,6 +2909,7 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 		}
 		Diag_P1_P2 = HYPOT(P2.x - P1.x, P2.y - P1.y);
 		CurrentLinePatLen = 0.04 * Diag_P1_P2;
+//Eprintf("PS CurrentLinePatLen %.3f\n", CurrentLinePatLen);
 		S1 = P1;
 		S2 = P2;
 /* ajb */
@@ -3032,6 +3036,7 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 		Q.y = (P2.y - P1.y) / (S2.y - S1.y);
 		Diag_P1_P2 = HYPOT(P2.x - P1.x, P2.y - P1.y);
 		CurrentLinePatLen = 0.04 * Diag_P1_P2;
+//Eprintf("IP CurrentLinePatLen %.3f\n", CurrentLinePatLen);
 		tp->width *= (P2.x - P1.x);
 		tp->height *= (P2.y - P1.y);
 		adjust_text_par();
@@ -3074,6 +3079,7 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 		Q.y = (P2.y - P1.y) / (S2.y - S1.y);
 		Diag_P1_P2 = HYPOT(P2.x - P1.x, P2.y - P1.y);
 		CurrentLinePatLen = 0.04 * Diag_P1_P2;
+//Eprintf("IR CurrentLinePatLen %.3f\n", CurrentLinePatLen);
 		tp->width *= (P2.x - P1.x);
 		tp->height *= (P2.y - P1.y);
 		adjust_text_par();
@@ -3264,6 +3270,7 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 					} else {
 						CurrentLinePatLen = Diag_P1_P2 * p1.y / 100.0;	/* relative */
 					}
+//Eprintf("LT CurrentLinePatLen %.3f\n", CurrentLinePatLen);
 				}
 			}
 		}
