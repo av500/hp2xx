@@ -228,6 +228,8 @@ int main(int argc, char *argv[])
 	__preset_par(pg, pi);
 	__cleanup_g(pg);
 
+	init_HPGL(pg, pi);
+
 	pi->in_file = argv[1];
 
 	if (*pi->in_file == '-')
