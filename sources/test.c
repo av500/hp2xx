@@ -136,6 +136,7 @@ static void __cleanup(GEN_PAR * pg, IN_PAR * pi)
 
 void Init_to_tmpfile(void)
 {
+DBG printf("[%5d]  ", n_commands);
 DBG printf("INIT\n");
 }
 
@@ -144,6 +145,7 @@ void Pen_to_tmpfile(int pen)
 	if (record_off)
 		return;
 
+DBG printf("[%5d]  ", n_commands);
 DBG printf("PEN %d\n", pen);
 }
 
@@ -152,6 +154,7 @@ void Speed_to_tmpfile(int speed)
 	if (record_off)
 		return;
 
+DBG printf("[%5d]  ", n_commands);
 DBG printf("VS  %d\n", speed);
 }
 
@@ -160,6 +163,7 @@ void Pt_to_tmpfile(PlotCmd cmd, const HPGL_Pt * pf)
 	if (record_off)		/* Wrong page!  */
 		return;
 
+DBG printf("[%5d]  ", n_commands);
 DBG printf("CMD %d  Pt  %13.3f %13.3f\n", cmd, pf->x, pf->y);
 }
 
@@ -171,6 +175,7 @@ void Line_Attr_to_tmpfile(LineAttrKind kind, int value)
 	if (kind == LineAttrEnd)	/* save this so we may save/restore the current state before character draw */
 		CurrentLineEnd = value;
 
+DBG printf("[%5d]  ", n_commands);
 DBG printf("DEF_LA  %d  %d\n", kind, value);
 	return;
 }
@@ -182,6 +187,7 @@ void Pen_Width_to_tmpfile(int pen, PEN_W width)
 	if (pen < 0)
 		return;		/* Might happen when "current pen" is still
 				   undefined */
+DBG printf("[%5d]  ", n_commands);
 DBG printf("DEF_PW %d  %f\n", pen, width);
 }
 
@@ -190,6 +196,7 @@ void Pen_Color_to_tmpfile(int pen, int red, int green, int blue)
 	if (record_off)		/* Wrong page!  */
 		return;
 
+DBG printf("[%5d]  ", n_commands);
 DBG printf("DEF_PC %d %d %d\n", red, green, blue);
 }
 
