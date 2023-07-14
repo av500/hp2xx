@@ -1660,25 +1660,16 @@ static void lines(int relative, void * hd)
 				p.y = p_last.y + 0.01;
 				outside = 0;
 				if (iwflag) {
-					p1x =
-					    P1.x + (p_last.x - S1.x) * Q.x;
-					p1y =
-					    P1.y + (p_last.y - S1.y) * Q.y;
+					p1x = P1.x + (p_last.x - S1.x) * Q.x;
+					p1y = P1.y + (p_last.y - S1.y) * Q.y;
 					p2x = P1.x + (p.x - S1.x) * Q.x;
 					p2y = P1.y + (p.y - S1.y) * Q.y;
 
-					outside =
-					    (DtClipLine
-					     (C1.x, C1.y, C2.x, C2.y, &p1x,
-					      &p1y, &p2x,
-					      &p2y) == CLIP_NODRAW);
+					outside = (DtClipLine(C1.x, C1.y, C2.x, C2.y, &p1x, &p1y, &p2x, &p2y) == CLIP_NODRAW);
 				}
 				if (!outside) {
-					Pen_action_to_tmpfile(MOVE_TO, &p,
-							      scale_flag);
-					Pen_action_to_tmpfile(DRAW_TO,
-							      &p_last,
-							      scale_flag);
+					Pen_action_to_tmpfile(MOVE_TO, &p, scale_flag);
+					Pen_action_to_tmpfile(DRAW_TO, &p_last, scale_flag);
 				}
 			}
 			return;
@@ -1690,7 +1681,6 @@ static void lines(int relative, void * hd)
 		numcmds++;
 	}
 }
-
 
 /*
  * line : process a pair of coordinates
@@ -1715,18 +1705,15 @@ void line(int relative, HPGL_Pt p)
 		x2 = P1.x + (p.x - S1.x) * Q.x;
 		y2 = P1.y + (p.y - S1.y) * Q.y;
 
-		outside =
-		    (DtClipLine(C1.x, C1.y, C2.x, C2.y, &x1, &y1, &x2, &y2)
-		     == CLIP_NODRAW);
+		outside = (DtClipLine(C1.x, C1.y, C2.x, C2.y, &x1, &y1, &x2, &y2) == CLIP_NODRAW);
 
 		if (!outside) {
-			p.x = (x2 - P1.x) / Q.x + S1.x;
-			p.y = (y2 - P1.y) / Q.y + S1.y;
+			p.x  = (x2 - P1.x) / Q.x + S1.x;
+			p.y  = (y2 - P1.y) / Q.y + S1.y;
 			pl.x = (x1 - P1.x) / Q.x + S1.x;
 			pl.y = (y1 - P1.y) / Q.y + S1.y;
 			if (pl.x != p_last.x || pl.y != p_last.y)
-				Pen_action_to_tmpfile(MOVE_TO, &pl,
-						      scale_flag);
+				Pen_action_to_tmpfile(MOVE_TO, &pl, scale_flag);
 
 		}
 
@@ -3838,7 +3825,6 @@ int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			}
 			cmd |= toupper(c & 0xFF);
 			n_commands++;
-Eprintf("%04X\r\n", cmd);
 			read_HPGL_cmd(pg, cmd, pi->hd);
 		}
 //	}

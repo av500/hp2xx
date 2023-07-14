@@ -70,10 +70,8 @@ static int ClipWithBorder(float delta,
 	return 1;
 }
 
-
-short DtClipLine(float xmin, float ymin,
-		 float xmax, float ymax,
-		 float *x1, float *y1, float *x2, float *y2)
+short DtClipLine(float xmin, float ymin, float xmax, float ymax,
+		 float *x1,  float *y1,  float *x2,  float *y2)
 {
 	short area_code1, area_code2;
 	float eps;
@@ -89,30 +87,19 @@ short DtClipLine(float xmin, float ymin,
 /*	fprintf(stderr,"clipped line from %f %f to %f %f\n",*x1,*y1,*x2,*y2);*/
 		return CLIP_NODRAW;
 	} else {
-		float dx, dy;
-		int dx0, dy0;
-		float tEnter, tLeave;
-		float *tE = &tEnter;
-		float *tL = &tLeave;
+		float dx     = *x2 - *x1;
+		float dy     = *y2 - *y1;
+		float tEnter = 0.0;
+		float tLeave = 1.;
+		float *tE    = &tEnter;
+		float *tL    = &tLeave;
+		int dx0      = (-eps < dx && dx < eps);
+		int dy0      = (-eps < dy && dy < eps);
 
-		dx = *x2 - *x1;
-		dy = *y2 - *y1;
-		tEnter = 0.0;
-		tLeave = 1.;
-		dx0 = (-eps < dx && dx < eps);
-		dy0 = (-eps < dy && dy < eps);
-
-		if (dx0 || ClipWithBorder(-dx, -(xmin - *x1), tE, tL))
-			if (dy0
-			    || ClipWithBorder(dy, (ymax - *y1), tE, tL))
-				if (dx0
-				    || ClipWithBorder(dx, (xmax - *x1), tE,
-						      tL))
-					if (dy0
-					    || ClipWithBorder(-dy,
-							      -(ymin -
-								*y1), tE,
-							      tL)) {
+		if (                        dx0 || ClipWithBorder(-dx, -(xmin - *x1), tE, tL))
+			if (                dy0 || ClipWithBorder( dy,  (ymax - *y1), tE, tL))
+				if (        dx0 || ClipWithBorder( dx,  (xmax - *x1), tE, tL))
+					if (dy0 || ClipWithBorder(-dy, -(ymin - *y1), tE, tL)) {
 						*x2 = *x1 + (tLeave * dx);
 						*y2 = *y1 + (tLeave * dy);
 						*x1 = *x1 + (tEnter * dx);
