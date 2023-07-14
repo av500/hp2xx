@@ -103,7 +103,7 @@
 
 #ifdef EMBEDDED
   #include "printf.h"
-  void hp2xx_reply(char *reply);
+  void hp2xx_reply(const char *reply);
 #else
   #include <stdio.h>
 #endif
