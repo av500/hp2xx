@@ -223,6 +223,7 @@ static unsigned char b_max = 255;
 
 /* Known HPGL commands, ASCII-coded as High-byte/low-byte int's */
 
+#define CM	0x2525 // VP %% for comments
 #define AA	0x4141
 #define AC	0x4143
 #define AD      0x4144
@@ -265,14 +266,14 @@ static unsigned char b_max = 255;
 #define MG      0x4D47
 #define NP      0x4E50
 #define NR      0x4E52
-#define OC	0x4F43 // vp
-#define OD	0x4F44 // vp
-#define OE	0x4F45 // vp
-#define OF	0x4F46 // vp
-#define OI	0x4F49 // vp
-#define OO	0x4F4F // vp
+#define OC	0x4F43 // VP
+#define OD	0x4F44 // VP
+#define OE	0x4F45 // VP
+#define OF	0x4F46 // VP
+#define OI	0x4F49 // VP
+#define OO	0x4F4F // VP
 #define OP	0x4F50
-#define OS	0x4F53 // vp
+#define OS	0x4F53 // VP
 #define OW	0x4F57
 #define PA	0x5041
 #define PB	0x5042
@@ -1199,6 +1200,17 @@ static float __atof(const char *num)
 	return sign * (integer + fraction / divisor);
 }
 
+static int is_mnemonic(int c)
+{
+	if(c>='a' && c <= 'z')
+		return 1;
+	if(c>='A' && c <= 'Z')
+		return 1;
+	if(c=='%')
+		return 1;
+	return 0;
+}
+
 int read_float(float *pnum, void *hd)
 /**
  ** Main work-horse for parameter input:
@@ -1226,7 +1238,7 @@ int read_float(float *pnum, void *hd)
 		if (c == ';') {
 			return 1;	// Terminator reached
 		}
-		if (((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'a')) || (c == ESC)) {
+		if (is_mnemonic(c) || (c == ESC)) {
 			unread_c(c, hd);
 			return 1;	// Next Mnemonic reached
 		}
@@ -1270,6 +1282,16 @@ void read_string(char *buf, void *hd)
 	if (c != StrTerm || StrTermSilent == 0)
 		*buf++ = c;
 	*buf = '\0';
+}
+
+void skip_comment(void *hd);
+
+void skip_comment(void *hd)
+{
+	int c = read_c(hd);
+	while ((c != EOF) && (c != ';') && (c != '\n')) {
+	     c = read_c(hd);
+	}
 }
 
 static void read_symbol_char(void * hd)
@@ -2471,11 +2493,14 @@ static void read_HPGL_cmd(GEN_PAR * pg, int cmd, void * hd)
  ** to allow for easy processing within a big switch statement:
  **/
 
-	switch (cmd & 0xDFDF) {	/* & forces to upper case       */
+	switch (cmd) {	
   /**
    ** Commands appear in alphabetical order within each topic group
    ** except for command synonyms.
    **/
+	case CM:		/* %% comment  */
+		skip_comment(hd);
+		break;
 	case AA:		/* Arc Absolute                 */
 		arcs(FALSE, hd);
 		tp->CR_point = HP_pos;
@@ -3720,7 +3745,7 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 	default:		/* Skip unknown HPGL command: */
 		n_unknown++;
 		if (!silent_mode)
-			Eprintf("  %c%c: ignored  ", cmd >> 8, cmd & 0xFF);
+			Eprintf("  %c%c: ignored\n", cmd >> 8, cmd & 0xFF);
 		if (cmd == EOF) {
 			n_unexpected++;
 			if (!silent_mode)
@@ -3760,7 +3785,7 @@ int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 			read_ESC_cmd(pi->hd, TRUE);	/* ESC sequence */
 			break;
 		default:
-			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
+			if(!is_mnemonic(c)) {
 				break;
 			}
 			// PG
@@ -3804,15 +3829,16 @@ int read_HPGL(GEN_PAR * pg, const IN_PAR * pi)
 					unread_c(cmd, ctx);
 				}
 			}
-			cmd = c << 8;
+			cmd = toupper(c) << 8;
 			if ((c = read_c(ctx)) == EOF)
 				return 1;
-			if ((c < 'A') || (c > 'z') || ((c > 'Z') && (c < 'a'))) {
+			if(!is_mnemonic(c)) {
 				unread_c(c, ctx);
 				break;
 			}
-			cmd |= (c & 0xFF);
+			cmd |= toupper(c & 0xFF);
 			n_commands++;
+Eprintf("%04X\r\n", cmd);
 			read_HPGL_cmd(pg, cmd, pi->hd);
 		}
 //	}
