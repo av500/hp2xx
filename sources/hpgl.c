@@ -3292,10 +3292,11 @@ Eprintf("min,max vor PS: %f %f %f %f\n",xmin,ymin,xmax,ymax);
 	case SC:		/* Input Scale Points S1,S2     */
 		User_to_Plotter_coord(&p_last, &p_last);
 		if (read_float(&p1.x, hd)) {	/* No number found  */
-			S1.x = P1X_default;
-			S1.y = P1Y_default;
-			S2.x = P2X_default;
-			S2.y = P2Y_default;
+			// revert to plotter coords
+			S1.x = 0;
+			S1.y = 0;
+			S2.x = PSX_default;
+			S2.y = PSY_default;
 			scale_flag = FALSE;
 			Q.x = Q.y = 1.0;
 			break;
